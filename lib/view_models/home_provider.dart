@@ -1,7 +1,7 @@
 
 import 'package:ebook/util/api.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ebook/util/api_request_status.dart';
+import 'package:ebook/util/enum.dart';
 import '../models/book.dart';
 import '../models/category_book.dart';
 import '../util/functions.dart';

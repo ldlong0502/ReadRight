@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../util/api_request_status.dart';
+import '../util/enum.dart';
 import 'error_widget.dart';
 import 'loading_widget.dart';
 

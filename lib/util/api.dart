@@ -17,7 +17,7 @@ class BooksApi {
       'https://www.googleapis.com/books/v1/volumes?q=subject:$subject&orderBy=newest&maxResults=$amount';
 
   Future<List<Book>?> getBooks(String url) async {
-    Response result = await http.get(Uri.parse(url ));
+    Response result = await http.get(Uri.parse(url + urlKey));
     List<Book> books = [];
     if (result.statusCode == 200) {
       final jsonResponse = json.decode(result.body);

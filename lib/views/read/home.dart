@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ebook/components/build_body.dart';
 import 'package:ebook/theme/theme_config.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +58,7 @@ class _HomeState extends State<Home> {
   _buildSlider(HomeProvider homeProvider, Size size) {
     final list = homeProvider.autoSubject.books;
     return Container(
-      height: 200,
+      height: 220,
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: CarouselSlider(
@@ -73,8 +75,13 @@ class _HomeState extends State<Home> {
                 width: double.infinity,
                 margin: const EdgeInsets.symmetric(vertical: 15),
                 decoration: BoxDecoration(
-                  color: ThemeConfig.secondBackground,
+                  
+                  border: Border.all(
+                    color: ThemeConfig.lightAccent,
+                    width: 1,
+                  ),
                   borderRadius: BorderRadius.circular(29),
+
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -88,7 +95,8 @@ class _HomeState extends State<Home> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Text(e.categories[0], style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),),
+                      child: Text(e.categories[0], 
+                      style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis, color: Colors.black),),
                     ),
 
                     Container(
@@ -117,14 +125,16 @@ class _HomeState extends State<Home> {
               )),
               Positioned(
                 right: 0,
-                top: 0,
+                top: 5,
                 child: Transform(
+                  
                     transform: Matrix4.identity()
                     ..setEntry(3, 2, 0.01)
-                    ..rotateY(-0.1),
+                    ..rotateY(- 20 * pi/180),
+                    alignment: Alignment.center,
                   child: Image.network(
                     e.thumbnailUrl,
-                    height: 140,
+                    height: 120,
                     width: size.width * .32,
                   ),
                 ),
