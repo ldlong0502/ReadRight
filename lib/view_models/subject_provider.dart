@@ -75,7 +75,7 @@ class SubjectProvider extends ChangeNotifier {
   Future<void> getBooks(subject) async {
     try {
       setApiRequestStatus(APIRequestStatus.loading);
-      setListBook(await api.getBooks(api.subject(subject, 40)));
+      setListBook(await api.getBooks());
       setApiRequestStatus(APIRequestStatus.loaded);
     } catch (e) {
       checkError(e);

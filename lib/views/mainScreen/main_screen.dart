@@ -5,7 +5,7 @@ import 'dart:math';
 
 import 'package:ebook/components/slider_menu.dart';
 import 'package:ebook/theme/theme_config.dart';
-import 'package:ebook/views/favorite/favorite.dart';
+import 'package:ebook/views/reading/reading.dart';
 import 'package:ebook/views/read/read.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
@@ -77,7 +77,7 @@ class _MainScreenState extends State<MainScreen>  with SingleTickerProviderState
                       physics: const NeverScrollableScrollPhysics(),
                       controller: _pageController,
                       onPageChanged: onPageChanged,
-                      children:  <Widget>[Read(ctx: context), Favorite()],
+                      children:  <Widget>[Read(ctx: context), const Reading()],
                     ),
                   ),
                 ),
@@ -120,12 +120,12 @@ class _MainScreenState extends State<MainScreen>  with SingleTickerProviderState
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book_rounded),
-              label: 'Home',
+              icon: Icon(Icons.search),
+              label: 'Khám phá',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border_rounded),
-              label: 'My favorite',
+              icon: Icon(Icons.menu_book_rounded),
+              label: 'Đang đọc',
             ),
             
           ],

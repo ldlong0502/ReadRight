@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:ebook/components/download_alert.dart';
 import 'package:ebook/util/enum.dart';
 import 'package:ebook/util/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../components/custom_alert.dart';
-import '../view_models/appbar_provider.dart';
+import '../models/book.dart';
 import '../view_models/subject_provider.dart';
 import 'const.dart';
 
@@ -106,9 +107,9 @@ class Dialogs {
                 const SizedBox(
                   height: 10,
                 ),
-                _buildText('Display'),
+                _buildText('Hiển thị'),
                 _buildDisplay(context),
-                _buildText('Sort'),
+                _buildText('Sắp xếp'),
                 _buildSort(context),
               ],
             ),
@@ -126,7 +127,7 @@ class Dialogs {
         const Expanded(
           child: Center(
             child: Text(
-              'Set up',
+              'Thiết lập',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
@@ -149,13 +150,13 @@ class Dialogs {
     var listDisplay = [
       {
         'icon': const Icon(Icons.grid_view),
-        'title': 'Grid',
+        'title': 'Lưới',
         'value': EnumDisplay.grid,
         'text': 'grid'
       },
       {
         'icon': const Icon(Icons.list_rounded),
-        'title': 'List',
+        'title': 'Danh sách',
         'value': EnumDisplay.list,
         'text': 'list'
       }
@@ -191,8 +192,8 @@ class Dialogs {
 
   _buildSort(BuildContext context) {
     var listSort = [
-      {'title': 'Latest', 'value': EnumSort.latest, 'text': 'latest'},
-      {'title': 'Outstanding', 'value': EnumSort.outstanding, 'text': 'outstanding'}
+      {'title': 'Mới nhất', 'value': EnumSort.latest, 'text': 'latest'},
+      {'title': 'Nổi bật', 'value': EnumSort.outstanding, 'text': 'outstanding'}
     ];
     return Consumer<SubjectProvider>(
       builder: (context, event, _) {
@@ -240,5 +241,13 @@ class Dialogs {
         )
       ]),
     );
+  }
+
+  showEpub(context , Book book){
+    if(book.epub == ''){
+      print('sorry');
+      return;
+    }
+    showDialog(context: context, builder: (context) => DownloadAlert(book: book,));
   }
 }

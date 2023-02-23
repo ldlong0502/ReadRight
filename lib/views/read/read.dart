@@ -17,15 +17,15 @@ class Read extends StatefulWidget {
 
 class _ReadState extends State<Read> with TickerProviderStateMixin {
   var listSubject = [
-    {'title': 'Home', 'widget': const Home()},
+    {'title': 'Trang chủ', 'widget': const Home()},
     {
-      'title': 'Fiction',
+      'title': 'Viễn tưởng',
       'widget': const SubjectWidget(
         title: 'Fiction',
       )
     },
     {
-      'title': 'Adventure',
+      'title': 'Phiêu lưu',
       'widget': const SubjectWidget(
         title: 'Adventure',
       )
@@ -37,9 +37,21 @@ class _ReadState extends State<Read> with TickerProviderStateMixin {
       )
     },
     {
-      'title': 'Novels',
+      'title': 'Tiểu thuyết',
       'widget': const SubjectWidget(
         title: 'Novels',
+      )
+    },
+    {
+      'title': 'Tiên hiệp',
+      'widget': const SubjectWidget(
+        title: 'Fairy',
+      )
+    },
+    {
+      'title': 'Văn học',
+      'widget': const SubjectWidget(
+        title: 'Literature',
       )
     },
   ];
@@ -151,19 +163,20 @@ class _ReadState extends State<Read> with TickerProviderStateMixin {
                                   color: ThemeConfig.darkPrimary),
                             ),
                             const SizedBox(
-                              width: 20,
+                              width: 10,
                             ),
-                            Text(
-                              'Search',
-                              style: TextStyle(color: ThemeConfig.darkPrimary),
+                            SizedBox(
+                              width: 120,
+                              child: Text(
+                                'Tìm kiếm tác giả, tên truyện',
+                                maxLines: 1,
+                                style: TextStyle(color: ThemeConfig.darkPrimary, overflow: TextOverflow.ellipsis),
+                              ),
                             )
                           ],
                         ),
                       ),
                     ),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.favorite_border)),
                     event.isHome
                         ? Container()
                         : IconButton(

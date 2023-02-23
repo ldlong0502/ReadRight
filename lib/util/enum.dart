@@ -15,3 +15,7 @@ enum EnumSort {
   latest,
   outstanding,
 }
+enum ActionBook {
+  details,
+  delete,
+}

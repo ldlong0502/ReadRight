@@ -60,7 +60,7 @@ class CustomSearch extends SearchDelegate {
     return Container(
       color: Colors.transparent,
       child: FutureBuilder<List<Book>?>(
-        future: BooksApi().getBooks('https://www.googleapis.com/books/v1/volumes?q=$query'),
+        future: BooksApi().getBooks(),
         builder: (context, snapshot) {
           if (query.isEmpty) return buildNoSuggestions();
 
@@ -94,7 +94,7 @@ class CustomSearch extends SearchDelegate {
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: result.thumbnailUrl != '' ? NetworkImage(result.thumbnailUrl) : null,
+                    backgroundImage: result.image != '' ? NetworkImage(result.image) : null,
                   ),
                   title: Text(result.title),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded),

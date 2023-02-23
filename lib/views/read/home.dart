@@ -4,10 +4,12 @@ import 'package:ebook/components/build_body.dart';
 import 'package:ebook/theme/theme_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../components/two_side_rounded_button.dart';
 import '../../view_models/home_provider.dart';
+import '../details/details_book.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -45,7 +47,7 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           _buildSlider(homeProvider, size),
           const SizedBox(height: 20.0),
-          _buildSectionTitle('Recently Added'),
+          _buildSectionTitle('Mới nhất'),
           const SizedBox(height: 20.0),
           _buildRecentBooks(homeProvider),
           // SizedBox(height: 20.0),
@@ -71,58 +73,69 @@ class _HomeState extends State<Home> {
           return Stack(
             children: [
               Positioned(
-                  child: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(vertical: 15),
-                decoration: BoxDecoration(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.rightToLeft,
+                          child: DetailsBook(
+                            book: e,
+                          )));
+                    },
+                    child: Container(
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.symmetric(vertical: 15),
+                                  decoration: BoxDecoration(
+                    
+                    border: Border.all(
+                      color: ThemeConfig.lightAccent,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(29),
                   
-                  border: Border.all(
-                    color: ThemeConfig.lightAccent,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(29),
-
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      constraints: const BoxConstraints(maxWidth: 150),
-                      margin: const EdgeInsets.only(top: 10 , left: 20),
-                      padding: const EdgeInsets.symmetric(vertical: 5 , horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        margin: const EdgeInsets.only(top: 10 , left: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 5 , horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(e.genre.join(', '), 
+                        style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis, color: Colors.black),),
                       ),
-                      child: Text(e.categories[0], 
-                      style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis, color: Colors.black),),
-                    ),
-
-                    Container(
-                      margin: const EdgeInsets.only(top: 10, left: 20),
-                      width: 180,
-                      child: Text(
-                        e.title,
-                        maxLines: 2,
-                        style:  const TextStyle(fontWeight: FontWeight.bold , fontSize: 20, overflow: TextOverflow.ellipsis),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10, left: 20),
-                      width: 180,
-                      child: Text(
-                        e.authors[0],
-                        style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: ThemeConfig.lightAccent, overflow: TextOverflow.ellipsis),
-                      ),
-                    ),
                   
-                  ],
-                ),
-              )),
+                      Container(
+                        margin: const EdgeInsets.only(top: 10, left: 20),
+                        width: 180,
+                        child: Text(
+                          e.title,
+                          maxLines: 2,
+                          style:  const TextStyle(fontWeight: FontWeight.bold , fontSize: 20, overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 10, left: 20),
+                        width: 180,
+                        child: Text(
+                          e.author,
+                          style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: ThemeConfig.lightAccent, overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                    
+                    ],
+                                  ),
+                                ),
+                  )),
               Positioned(
                 right: 0,
                 top: 5,
@@ -133,7 +146,7 @@ class _HomeState extends State<Home> {
                     ..rotateY(- 20 * pi/180),
                     alignment: Alignment.center,
                   child: Image.network(
-                    e.thumbnailUrl,
+                    e.image,
                     height: 120,
                     width: size.width * .32,
                   ),
@@ -190,65 +203,76 @@ class _HomeState extends State<Home> {
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-          child: SizedBox(
-            height: 180, 
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    child: Image.network(book.thumbnailUrl, fit: BoxFit.fill,),
-                    )),
-                    Expanded(flex: 2,child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                      SizedBox(
-                            width: 180,
-                            child: Text(
-                              book.title,
-                              maxLines: 2,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  overflow: TextOverflow.ellipsis),
+          child: InkWell(
+            onTap: (){
+              Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: DetailsBook(
+                          book: book,
+                        )));
+            },
+            child: SizedBox(
+              height: 180, 
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      child: Image.network(book.image, fit: BoxFit.fill,),
+                      )),
+                      Expanded(flex: 2,child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+          
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                        SizedBox(
+                              width: 180,
+                              child: Text(
+                                book.title,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 5,),
-                          SizedBox(
-                            width: 180,
-                            child: Text(
-                              book.authors[0],
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: ThemeConfig.lightAccent,
-                                  fontWeight: FontWeight.bold,
-                                  overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 5,),
+                            SizedBox(
+                              width: 180,
+                              child: Text(
+                                book.author,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: ThemeConfig.lightAccent,
+                                    fontWeight: FontWeight.bold,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          SizedBox(
-                            width: 180,
-                            child: Text(
-                              book.description,
-                              maxLines: 3,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: ThemeConfig.authorColor,
-                                  
-                                  overflow: TextOverflow.ellipsis),
+                            const SizedBox(
+                              height: 5,
                             ),
-                          ),
-                    ],))
-              ],
-            ),
-            
-            )
+                            SizedBox(
+                              width: 180,
+                              child: Text(
+                                book.description,
+                                maxLines: 3,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: ThemeConfig.authorColor,
+                                    
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
+                      ],))
+                ],
+              ),
+              
+              ),
+          )
         );
       },
     );

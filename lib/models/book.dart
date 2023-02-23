@@ -1,46 +1,66 @@
+
+
 class Book {
-  String id;
-  String title;
-  List<String> authors;
-  String publisher;
-  String publishedDate;
-  String description;
-  int pageCount;
-  List<String> categories;
-  double averageRating;
-  int ratingsCount;
-  String thumbnailUrl;
-  String previewLink;
+  final int id;
+  final String title;
+  final String image;
+  final String author;
+  final String year;
+  final int createdAt;
+  final String publisher;
+  final String view;
+  final List<String> genre;
+  final String pages;
+  final String description;
+  final String epub;
+  int addedDate = DateTime.now().millisecondsSinceEpoch;
 
   Book({
     required this.id,
     required this.title,
-    required this.authors,
+    required this.image,
+    required this.author,
+    required this.year,
+    required this.createdAt,
     required this.publisher,
-    required this.publishedDate,
+    required this.view,
+    required this.genre,
+    required this.pages,
     required this.description,
-    required this.pageCount,
-    required this.categories,
-    required this.averageRating,
-    required this.ratingsCount,
-    required this.thumbnailUrl,
-    required this.previewLink,
+    required this.epub,
   });
 
-  factory Book.fromJson(Map<String, dynamic> json) {
+  factory Book.fromJson(Map<dynamic, dynamic> json) {
     return Book(
-      id: json['id'],
-      title: json['volumeInfo']['title'],
-      authors: List<String>.from(json['volumeInfo']['authors'] ?? ['None']),
-      publisher: json['volumeInfo']['publisher'] ?? '',
-      publishedDate: json['volumeInfo']['publishedDate'] ?? '',
-      description: json['volumeInfo']['description'] ?? '',
-      pageCount: json['volumeInfo']['pageCount'] ?? 0,
-      categories: List<String>.from(json['volumeInfo']['categories'] ?? ['None']),
-      averageRating: (json['volumeInfo']['averageRating'] ?? 0).toDouble(),
-      ratingsCount: json['volumeInfo']['ratingsCount'] ?? 0,
-      thumbnailUrl: json['volumeInfo']['imageLinks'] != null ? json['volumeInfo']['imageLinks']['thumbnail'] ?? '' : '',
-      previewLink: json['volumeInfo']['previewLink'] ?? '',
+      id: json['id'] as int,
+      title: json['title'] as String,
+      image: json['image'] as String,
+      author: json['author'] as String,
+      year: json['year'] as String,
+      createdAt: json['createdAt'] as int,
+      publisher: json['publisher'] as String,
+      view: json['view'] as String,
+      genre: List<String>.from(json['genre'] as List),
+      pages: json['pages'] as String,
+      description: json['description'] as String,
+      epub: json['epub'] as String,
     );
+  }
+  Map<dynamic, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'image': image,
+      'author': author,
+      'year': year,
+      'createdAt': createdAt,
+      'publisher': publisher,
+      'view': view,
+      'genre': genre,
+      'pages': pages,
+      'description': description,
+      'epub': epub,
+      'addedDate': addedDate,
+    };
   }
 }

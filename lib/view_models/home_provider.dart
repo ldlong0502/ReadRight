@@ -34,14 +34,8 @@ class HomeProvider with ChangeNotifier {
       setApiRequestStatus(APIRequestStatus.loading);
 
       //get auto subject
-      var listSubject = <Book>[];
-      listSubject.add((await api.getBooks(api.subject('novels', 1)))![0]);
-      listSubject.add((await api.getBooks(api.subject('fiction', 1)))![0]);
-      listSubject.add((await api.getBooks(api.subject('adventure', 1)))![0]);
-      listSubject.add((await api.getBooks(api.subject('manga', 1)))![0]);
-      listSubject.add((await api.getBooks(api.subject('love', 1)))![0]);
-      setAutoSubject(_autoSubject.copyWith(books: listSubject));
-      setRecent(_recent.copyWith(books: (await api.getBooks(api.urlRecent))));
+      setAutoSubject(_autoSubject.copyWith(books: (await api.getBooks())));
+      setRecent(_recent.copyWith(books: (await api.getBooks())));
       setApiRequestStatus(APIRequestStatus.loaded);
     }
     catch (e){

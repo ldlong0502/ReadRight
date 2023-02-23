@@ -44,7 +44,7 @@ class _SliderMenuState extends State<SliderMenu> {
             const Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
-                'A person who won’t read has no advantage over one who can’t read. (Mark Twain)',
+                'Một người không đọc không có lợi thế hơn một người không biết đọc. (Mark Twain)',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -52,7 +52,7 @@ class _SliderMenuState extends State<SliderMenu> {
               ),
             ),
             
-            const SideMenuTitle(),
+             SideMenuTitle(context: context,),
           ],
         ),
       ),

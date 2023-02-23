@@ -1,21 +1,31 @@
 import 'package:ebook/view_models/appbar_provider.dart';
+import 'package:ebook/view_models/details_provider.dart';
 import 'package:ebook/view_models/home_provider.dart';
 import 'package:ebook/view_models/subject_provider.dart';
 import 'package:ebook/views/mainScreen/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'theme/theme_config.dart';
 import 'util/const.dart';
 import 'view_models/app_provider.dart';
+import 'view_models/book_mark_provider.dart';
+import 'view_models/book_reading_provider.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox('bookmark_books');
+  await Hive.openBox('book_reading_books');
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => AppBarProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => DetailsProvider()),
+        ChangeNotifierProvider(create: (_) => BookMarkProvider()),
+        ChangeNotifierProvider(create: (_) => BookReadingProvider()),
         ChangeNotifierProvider(create: (_) => SubjectProvider()),
       ],
       child: const MyApp(),
