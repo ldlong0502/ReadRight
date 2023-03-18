@@ -1,6 +1,8 @@
 import 'package:ebook/view_models/appbar_provider.dart';
+import 'package:ebook/view_models/audio_provider.dart';
 import 'package:ebook/view_models/details_provider.dart';
 import 'package:ebook/view_models/home_provider.dart';
+import 'package:ebook/view_models/speed_provider.dart';
 import 'package:ebook/view_models/subject_provider.dart';
 import 'package:ebook/views/mainScreen/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('bookmark_books');
   await Hive.openBox('book_reading_books');
+  await Hive.openBox('audio_books');
   runApp(
     MultiProvider(
       providers: [
@@ -26,6 +29,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => DetailsProvider()),
         ChangeNotifierProvider(create: (_) => BookMarkProvider()),
         ChangeNotifierProvider(create: (_) => BookReadingProvider()),
+        ChangeNotifierProvider(create: (_) => SpeedProvider()),
+        ChangeNotifierProvider(create: (_) => AudioProvider()),
         ChangeNotifierProvider(create: (_) => SubjectProvider()),
       ],
       child: const MyApp(),
@@ -47,7 +52,7 @@ class MyApp extends StatelessWidget {
           navigatorKey: appProvider.navigatorKey,
           title: Constants.appName,
           theme: themeData(appProvider.theme),
-          darkTheme: themeData(ThemeConfig.darkTheme),
+          
           home: const MainScreen(),
         );
       },

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class ThemeConfig {
   static Color lightPrimary = Colors.white;
-  static Color darkPrimary = const Color(0xff1f1f1f);
-  static Color lightAccent = const Color(0xff32CD32);
-  static Color darkAccent = const Color(0xff008000);
-  static Color lightSecond = const Color(0xffF5F5F5);
+  static Color lightAccent = const Color(0xff108dc7 );
+  static Color secondAccent = const Color(0xffff8c00);
+  static Color thirdAccent = const Color(0xff405070);
+  static Color lightSecond = const Color(0xff3f4f6e);
+  static Color fourthAccent = const Color(0xffef8e38);
   static Color secondBackground = const Color(0xffF8F5F1);
   static Color authorColor = const Color(0xff757575);
   static Color lightBG = Colors.white;
-  static Color darkBG = const Color(0xff121212);
 
   static ThemeData lightTheme = ThemeData(
     colorScheme: ColorScheme.light(background: lightBG),
@@ -18,33 +18,16 @@ class ThemeConfig {
     appBarTheme: AppBarTheme(
       color: lightPrimary,
       elevation: 0.0,
-      titleTextStyle: const TextStyle(
-        color: Colors.black,
+      titleTextStyle:  TextStyle(
+        color: lightAccent,
         fontSize: 20,
         fontWeight: FontWeight.w800,
       ),
-      iconTheme: const IconThemeData(
-        color: Colors.black,
+      iconTheme:  IconThemeData(
+        color: lightAccent,
       ),
     ),
   );
 
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    colorScheme: ColorScheme.dark(background: darkBG),
-    primaryColor: darkPrimary,
-    scaffoldBackgroundColor: darkBG,
-    appBarTheme: AppBarTheme(
-      color: darkPrimary,
-      elevation: 0.0,
-      titleTextStyle: const TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.w800,
-      ),
-      iconTheme: const IconThemeData(
-        color: Colors.white,
-      ),
-    ),
-  );
+ 
 }

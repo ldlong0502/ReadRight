@@ -1,12 +1,14 @@
 import 'dart:io';
 
+import 'package:ebook/components/chapter_dialog.dart';
 import 'package:ebook/components/download_alert.dart';
+import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/util/enum.dart';
-import 'package:ebook/util/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../components/custom_alert.dart';
+import '../components/speed_dialog.dart';
 import '../models/book.dart';
 import '../view_models/subject_provider.dart';
 import 'const.dart';
@@ -97,7 +99,7 @@ class Dialogs {
                 border: Border.all(
                   color: Colors.white,
                 ),
-                color: Functions.isDark(context) ? Colors.black : Colors.white,
+                color: Colors.white,
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
@@ -113,6 +115,33 @@ class Dialogs {
                 _buildSort(context),
               ],
             ),
+          );
+        });
+  }
+
+  showChapterBottomDialog(BuildContext context,
+      List<Map<String, dynamic>> listMp3, int index, Function onChooseChapter) {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return ChapterDialog(
+            listMp3: listMp3,
+            index: index,
+            onChooseChapter: onChooseChapter,
+          );
+        });
+  }
+
+  showSpeedBottomDialog(BuildContext context, Function onChooseSpeed) {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return SpeedDialog(
+            onChooseSpeed: onChooseSpeed,
           );
         });
   }
@@ -173,9 +202,9 @@ class Dialogs {
                         Navigator.pop(context);
                         return;
                       }
-                      Provider.of<SubjectProvider>(context, listen: false).setDisplay(
-                          listDisplay[index]['value'],
-                          listDisplay[index]['text']);
+                      Provider.of<SubjectProvider>(context, listen: false)
+                          .setDisplay(listDisplay[index]['value'],
+                              listDisplay[index]['text']);
                       Navigator.pop(context);
                     },
                     leading: listDisplay[index]['icon'] as Icon,
@@ -207,8 +236,9 @@ class Dialogs {
                       Navigator.pop(context);
                       return;
                     }
-                    Provider.of<SubjectProvider>(context, listen: false).setSort(
-                        listSort[index]['value'], listSort[index]['text']);
+                    Provider.of<SubjectProvider>(context, listen: false)
+                        .setSort(
+                            listSort[index]['value'], listSort[index]['text']);
                     Navigator.pop(context);
                   },
                   title: Text(listSort[index]['title'] as String),
@@ -243,11 +273,15 @@ class Dialogs {
     );
   }
 
-  showEpub(context , Book book){
-    if(book.epub == ''){
+  showEpub(context, Book book) {
+    if (book.epub == '') {
       print('sorry');
       return;
     }
-    showDialog(context: context, builder: (context) => DownloadAlert(book: book,));
+    showDialog(
+        context: context,
+        builder: (context) => DownloadAlert(
+              book: book,
+            ));
   }
 }

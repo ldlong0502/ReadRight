@@ -60,7 +60,15 @@ dependencies:
   device_info_plus: ^8.1.0
   hive_flutter: ^1.1.0
   flutter_slidable: ^2.0.0
-
+  just_audio: ^0.9.31
+  just_audio_background: ^0.0.1-beta.9
+  rxdart: ^0.27.7
+  audio_video_progress_bar: ^1.0.0
+  syncfusion_flutter_sliders: ^20.4.53
+  animated_text_kit: ^4.2.2
+  miniplayer: ^1.0.1
+  persistent_bottom_nav_bar: ^5.0.2
+  flutter_group_sliver: ^0.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

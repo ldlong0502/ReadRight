@@ -1,7 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:ebook/models/media_data.dart';
 
-class Book {
+class AudioBook {
   final int id;
   final String title;
   final String image;
@@ -9,14 +10,13 @@ class Book {
   final String year;
   final int createdAt;
   final String publisher;
-  final int view;
+  final int listen;
   final List<String> genre;
-  final String pages;
+  final List<Map<String, dynamic>> listMp3;
   final String description;
-  final String epub;
   int addedDate = DateTime.now().millisecondsSinceEpoch;
   String? locator;
-  Book({
+  AudioBook({
     required this.id,
     required this.title,
     required this.image,
@@ -24,15 +24,15 @@ class Book {
     required this.year,
     required this.createdAt,
     required this.publisher,
-    required this.view,
+    required this.listen,
     required this.genre,
-    required this.pages,
+    required this.listMp3,
     required this.description,
-    required this.epub,
+
   });
 
-  factory Book.fromJson(Map<dynamic, dynamic> json) {
-    return Book(
+  factory AudioBook.fromJson(Map<dynamic, dynamic> json) {
+    return AudioBook(
       id: json['id'] as int,
       title: json['title'] as String,
       image: json['image'] as String,
@@ -40,11 +40,10 @@ class Book {
       year: json['year'] as String,
       createdAt: json['createdAt'] as int,
       publisher: json['publisher'] as String,
-      view: json['view'] as int,
+      listen: json['listen'] as int,
       genre: List<String>.from(json['genre'] as List),
-      pages: json['pages'] as String,
+      listMp3: List<Map<String, dynamic>>.from(json['mp3']),
       description: json['description'] as String,
-      epub: json['epub'] as String,
     );
   }
   Map<dynamic, dynamic> toJson() {
@@ -56,16 +55,10 @@ class Book {
       'year': year,
       'createdAt': createdAt,
       'publisher': publisher,
-      'view': view,
+      'listen': listen,
       'genre': genre,
-      'pages': pages,
       'description': description,
-      'epub': epub,
       'addedDate': addedDate,
     };
   }
-
-  
-
-  
 }

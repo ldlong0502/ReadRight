@@ -19,3 +19,4 @@ enum ActionBook {
   details,
   delete,
 }
+enum ModeAudio { none, miniPlayer, maxPlayer }

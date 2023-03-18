@@ -34,8 +34,10 @@ class HomeProvider with ChangeNotifier {
       setApiRequestStatus(APIRequestStatus.loading);
 
       //get auto subject
-      setAutoSubject(_autoSubject.copyWith(books: (await api.getBooks())));
-      setRecent(_recent.copyWith(books: (await api.getBooks())));
+      var top5book = '${api.bookUrlKey}?_sort=view&_order=desc&_limit=5';
+      setAutoSubject(_autoSubject.copyWith(books: (await api.getFilterBooks(top5book))));
+      var top10recent = '${api.bookUrlKey}?_sort=createdAt&_order=desc&_limit=10';
+      setRecent(_recent.copyWith(books: (await api.getFilterBooks(top10recent))));
       setApiRequestStatus(APIRequestStatus.loaded);
     }
     catch (e){

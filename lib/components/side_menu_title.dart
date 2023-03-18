@@ -94,9 +94,7 @@ class _SideMenuTitleState extends State<SideMenuTitle> {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: itemsBrowse.length,
       itemBuilder: (BuildContext context, int index) {
-        if (itemsBrowse[index]['title'] == 'Chế độ') {
-          return _buildThemeSwitch(itemsBrowse[index]);
-        }
+       
 
         return ListTile(
           onTap: itemsBrowse[index]['function'] as Function(),
@@ -120,35 +118,7 @@ class _SideMenuTitleState extends State<SideMenuTitle> {
     );
   }
 
-  Widget _buildThemeSwitch(Map item) {
-    return SwitchListTile(
-      secondary: Icon(
-        item['icon'],
-        color: Colors.white,
-      ),
-      title: Text(
-        item['title'],
-        style: const TextStyle(
-          color: Colors.white,
-        ),
-      ),
-      inactiveThumbColor: Colors.white,
-      activeColor: Colors.black,
-      value: Provider.of<AppProvider>(context).theme == ThemeConfig.lightTheme
-          ? false
-          : true,
-      onChanged: (v) {
-        if (v) {
-          Provider.of<AppProvider>(context, listen: false)
-              .setTheme(ThemeConfig.darkTheme, 'dark');
-        } else {
-          Provider.of<AppProvider>(context, listen: false)
-              .setTheme(ThemeConfig.lightTheme, 'light');
-        }
-      },
-    );
-  }
-
+  
   _buildAbout() {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 10),

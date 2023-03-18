@@ -3,9 +3,11 @@ import 'package:ebook/util/functions.dart';
 import 'package:ebook/view_models/details_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../models/book.dart';
 import '../../theme/theme_config.dart';
+import '../bookmark/book_mark.dart';
 
 class DetailsBook extends StatefulWidget {
   const DetailsBook({super.key, required this.book});
@@ -39,19 +41,23 @@ class _DetailsBookState extends State<DetailsBook> {
                   if (event.isBookMark) {
                     event.removeBookMark();
                     ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                      duration: const Duration(seconds: 1),
+                      duration: const Duration(seconds: 2),
                         content: const Text('Đã xóa khỏi danh sách yêu thích!' ),
                         action: SnackBarAction(
                           textColor: ThemeConfig.lightAccent,
-                          label: 'Xem', onPressed: (){}),));
+                          label: 'Xem', onPressed: (){
+                            goBookMark();
+                          }),));
                   } else {
                     event.addBookMark();
                     ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                      duration: const Duration(seconds: 1),
+                      duration: const Duration(seconds: 2),
                         content: const Text('Đã thêm vào danh sách yêu thích!'),
                         action: SnackBarAction(
                            textColor: ThemeConfig.lightAccent,
-                          label: 'Xem', onPressed: (){}),));
+                          label: 'Xem', onPressed: (){
+                            goBookMark();
+                          }),));
                   }
                 },
                 icon: Icon(
@@ -78,14 +84,12 @@ class _DetailsBookState extends State<DetailsBook> {
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
                   color:
-                      Functions.isDark(context) ? Colors.white : Colors.black,
+                       Colors.black,
                   borderRadius: BorderRadius.circular(10)),
               child: Center(
                 child: Text('Đọc ngay',
                     style: TextStyle(
-                      color: Functions.isDark(context)
-                          ? Colors.black
-                          : Colors.white,
+                      color:  Colors.white,
                     )),
               )),
         ),
@@ -134,7 +138,7 @@ class _DetailsBookState extends State<DetailsBook> {
                 endIndent: 10,
               ),
               Container(
-                height: 70,
+                height: 80,
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
@@ -264,5 +268,12 @@ class _DetailsBookState extends State<DetailsBook> {
             ]),
       );
     });
+  }
+  
+  void goBookMark() {
+     Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.fade, child: const BookMark()));
   }
 }

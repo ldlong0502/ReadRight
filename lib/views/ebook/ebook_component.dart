@@ -1,25 +1,24 @@
-import 'dart:math';
 
 import 'package:ebook/components/build_body.dart';
+import 'package:ebook/models/book.dart';
 import 'package:ebook/theme/theme_config.dart';
+import 'package:ebook/util/route.dart';
+import 'package:ebook/views/ebook/ebook_subject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import '../../components/two_side_rounded_button.dart';
-import '../../util/dialogs.dart';
 import '../../view_models/home_provider.dart';
 import '../details/details_book.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class EbookComponent extends StatefulWidget {
+  const EbookComponent({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<EbookComponent> createState() => _EbookComponentState();
 }
 
-class _HomeState extends State<Home> {
+class _EbookComponentState extends State<EbookComponent> {
   @override
   void initState() {
     super.initState();
@@ -44,16 +43,18 @@ class _HomeState extends State<Home> {
     return RefreshIndicator(
       onRefresh: () => homeProvider.getBooks(),
       child: ListView(
-        physics: const BouncingScrollPhysics(),
+        primary: false,
+        shrinkWrap: true,
+
         children: <Widget>[
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 20.0),
           _buildSectionTitle('Danh mục'),
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 20.0),
           _buildGenre(homeProvider, size),
-           const SizedBox(height: 10.0),
+          const SizedBox(height: 20.0),
           _buildSectionTitle('Top 5 trending'),
           _buildSlider(homeProvider, size),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 10.0),
           _buildSectionTitle('Mới nhất'),
           const SizedBox(height: 10.0),
           _buildRecentBooks(homeProvider),
@@ -66,135 +67,32 @@ class _HomeState extends State<Home> {
 
   _buildSlider(HomeProvider homeProvider, Size size) {
     final list = homeProvider.autoSubject.books;
+     final listWidget = List.generate(
+        list.length, (index) => _buildBook(list[index] , index),)
+      ..add(IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_forward_rounded)));
     return Container(
-      height: 220,
+      height: 170,
+      
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: CarouselSlider(
-        options: CarouselOptions(
-          autoPlay: true,
-          aspectRatio: 2.0,
-          enlargeCenterPage: true,
-        ),
-        items: list.map((e) {
-          return Stack(
-            children: [
-              Positioned(
-                  child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      PageTransition(
-                          type: PageTransitionType.rightToLeft,
-                          child: DetailsBook(
-                            book: e,
-                          ))).then((value) => setState(() {}));
-                },
-                child: Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(vertical: 15),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: ThemeConfig.lightAccent,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(29),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        margin: const EdgeInsets.only(top: 10, left: 20),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          e.genre.join(', '),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis,
-                              color: Colors.black),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 10, left: 20),
-                        width: 180,
-                        child: Text(
-                          e.title,
-                          maxLines: 2,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 10, left: 20),
-                        width: 180,
-                        child: Text(
-                          e.author,
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: ThemeConfig.lightAccent,
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )),
-              Positioned(
-                right: 0,
-                top: 5,
-                child: Transform(
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.01)
-                    ..rotateY(-20 * pi / 180),
-                  alignment: Alignment.center,
-                  child: Image.network(
-                    e.image,
-                    height: 120,
-                    width: size.width * .32,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 15,
-                right: 0,
-                child: SizedBox(
-                  height: 40,
-                  width: size.width * .3,
-                  child: TwoSideRoundedButton(
-                    text: "Đọc",
-                    radius: 24,
-                    press: () {
-                      Dialogs().showEpub(context, e);
-                    },
-                  ),
-                ),
-              ),
-            ],
-          );
-        }).toList(),
-      ),
+      margin: const EdgeInsets.only(top: 10 ),
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        children: listWidget
+      )
+              
     );
   }
 
   _buildSectionTitle(String title) {
-    return Padding(
+    return  Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
             title,
-            style:  TextStyle(
+            style: TextStyle(
               fontSize: 18.0,
               color: ThemeConfig.lightAccent,
               fontWeight: FontWeight.bold,
@@ -205,10 +103,36 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget _buildBook(Book book , int index) {
+    return InkWell(
+      onTap: (){
+        MyRouter.pushAnimation(context, DetailsBook(book: book));
+      },
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(book.image , fit: BoxFit.cover, width: 120,)),
+          ),
+           Positioned(
+            bottom: 10,
+            left: 30,
+            child: Text((index + 1).toString(), style:  TextStyle(
+              color: ThemeConfig.fourthAccent,
+              fontSize: 50,
+              fontWeight: FontWeight.bold
+            ),) )
+    
+        ],
+      ),
+    );
+  }
   _buildRecentBooks(HomeProvider homeProvider) {
     return ListView.builder(
       primary: false,
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.only(left: 15.0),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: homeProvider.recent.books.length,
@@ -301,36 +225,55 @@ class _HomeState extends State<Home> {
   _buildGenre(HomeProvider homeProvider, Size size) {
     var listGenre = [
       {'name': 'Lịch sử', 'asset': 'assets/images/history.png'},
-      {'name': 'Tiên hiệp - huyền huyễn', 'asset': 'assets/images/fairy.png'},
+      {'name': 'Tiên hiệp - Huyền huyễn', 'asset': 'assets/images/fairy.png'},
       {'name': 'Văn học', 'asset': 'assets/images/literature.png'},
       {'name': 'Truyện', 'asset': 'assets/images/story.png'},
-      {'name': 'tài chính', 'asset': 'assets/images/financial.png'}
+      {'name': 'Tài chính', 'asset': 'assets/images/financial.png'}
     ];
     return SizedBox(
-        height: listGenre.length / 5 * 50,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: listGenre.map((e) => Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(10.0),
-               decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(10),
+        height: listGenre.length / 5 * 30,
+        child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: listGenre.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  MyRouter.pushAnimation(
+                      context, EbookSubject(genre: listGenre[index]));
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(
+                    left: 20.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          listGenre[index]['asset']!,
+                          height: 15,
                         ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Image.asset(e['asset']! , height: 15,),
-                    const SizedBox(width: 5,),
-                    Text(e['name']! , style: const TextStyle(fontSize: 12),),
-                  ],
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          listGenre[index]['name']!,
+                          style: TextStyle(
+                              fontSize: 12, color: ThemeConfig.lightAccent),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            )).toList()
-          ),
-        ));
+              );
+            }));
   }
+
+  
 }

@@ -1,7 +1,6 @@
 
 
 import 'package:ebook/components/side_menu_title.dart';
-import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/util/const.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +19,7 @@ class _SliderMenuState extends State<SliderMenu> {
       body: Container(
         width: 288,
         height: double.infinity,
-        color: ThemeConfig.lightAccent,
+        decoration: Constants.linearDecoration,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

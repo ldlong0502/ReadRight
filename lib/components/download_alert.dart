@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:ebook/models/book_download.dart';
 import 'package:ebook/util/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -32,7 +33,8 @@ class _DownloadAlertState extends State<DownloadAlert> {
   final hiveBookReading = Hive.box('book_reading_books');
 
   addBookReading(){
-    hiveBookReading.put(widget.book.id, widget.book.toJson());
+    var bookDown = BookDownLoad(item: widget.book, location: '');
+    hiveBookReading.put(widget.book.id, bookDown.toJson()); 
   }
   download() async {
     if (Platform.isAndroid || Platform.isIOS) {
@@ -89,12 +91,12 @@ class _DownloadAlertState extends State<DownloadAlert> {
         },
       ).whenComplete(() {
         addBookReading();
-        Functions().openEpub(path, context);});
+        Functions().openEpub(path, context, widget.book);});
     }
     else{
       if(!mounted) return;
       Navigator.pop(context);
-      Functions().openEpub(path, context);
+      Functions().openEpub(path, context, widget.book);
     }
     
   }

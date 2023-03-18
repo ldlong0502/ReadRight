@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -28,8 +29,8 @@ class BookReadingProvider extends ChangeNotifier {
     var list = <Book>[];
     var data = hiveBookReading.values.toList();
     for (var item in data) {
-      Book book = Book.fromJson(item);
-      list.add(book);
+      Book book = Book.fromJson(item["item"]);
+      list.insert(0,book);
     }
     list.sort((a,b) => b.addedDate.compareTo(a.addedDate));
     bookReadingList = [...list];

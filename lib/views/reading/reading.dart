@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ebook/util/functions.dart';
 import 'package:ebook/view_models/book_reading_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -145,59 +145,66 @@ class _ReadingState extends State<Reading> {
 
   _buildRecentlyBook(BookReadingProvider event) {
     var item = event.bookReadingList[0];
-    return SizedBox(
-      height: 300,
-      child: Column(
-        children: [
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 20),
-              height: 220,
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(item.image)),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(),
+    return InkWell(
+      onTap: () async {
+        var url = await Functions().getPath(item);
+        if(!mounted) return;
+        Functions().openEpub( url, context , item);
+      },
+      child: SizedBox(
+        height: 300,
+        child: Column(
+          children: [
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: 20),
+                height: 220,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(item.image)),
               ),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Center(
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Center(
+                          child: Text(
+                            item.title,
+                            maxLines: 1,
+                            style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                        ),
+                      ),
+                      Center(
                         child: Text(
-                          item.title,
-                          maxLines: 1,
-                          style: const TextStyle(
-                              fontSize: 18,
+                          item.author,
+                          style: TextStyle(
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
+                              color: ThemeConfig.lightAccent,
                               overflow: TextOverflow.ellipsis),
                         ),
                       ),
-                    ),
-                    Center(
-                      child: Text(
-                        item.author,
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: ThemeConfig.lightAccent,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(flex: 1, child: _buildPopUpMenu(event, item))
-            ],
-          ),
-        ],
+                Expanded(flex: 1, child: _buildPopUpMenu(event, item))
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

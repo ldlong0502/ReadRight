@@ -38,13 +38,8 @@ class AppProvider extends ChangeNotifier {
     ThemeData t;
     String r = prefs.getString('theme') ?? 'light';
 
-    if (r == 'light') {
-      t = ThemeConfig.lightTheme;
-      setTheme(ThemeConfig.lightTheme, 'light');
-    } else {
-      t = ThemeConfig.darkTheme;
-      setTheme(ThemeConfig.darkTheme, 'dark');
-    }
+    t = ThemeConfig.lightTheme;
+    setTheme(ThemeConfig.lightTheme, 'light');
 
     return t;
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class MyRouter {
   static Future pushPage(BuildContext context, Widget page) {
@@ -37,5 +38,21 @@ class MyRouter {
         },
       ),
     );
+  }
+
+  static pushAnimation(BuildContext context, Widget page){
+    Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.rightToLeft,
+            child: page));
+  }
+  static pushAnimationChooseType(BuildContext context, Widget page, PageTransitionType type) {
+    Navigator.push(context,
+        PageTransition(type: type, child: page));
+  }
+  static pushReplacementAnimation(BuildContext context, Widget page) {
+    Navigator.pushReplacement(context,
+        PageTransition(type: PageTransitionType.rightToLeft, child: page));
   }
 }

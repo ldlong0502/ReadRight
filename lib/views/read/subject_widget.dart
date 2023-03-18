@@ -32,7 +32,7 @@ class _SubjectWidgetState extends State<SubjectWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<SubjectProvider>(builder: (context, event, _) {
-      return event.display == EnumDisplay.grid
+      return event.listBook.isEmpty ? _buildEmpty() : event.display == EnumDisplay.grid
           ? _buildGrid(event.sort, event)
           : _buildList(event.sort, event);
     });
@@ -70,7 +70,7 @@ class _SubjectWidgetState extends State<SubjectWidget> {
               var bookSort = [...event.listBook];
               if (event.sort == EnumSort.outstanding) {
                 bookSort
-                    .sort((a, b) => int.parse(b.view).compareTo(int.parse(a.view)));
+                    .sort((a, b) => b.view.compareTo(a.view));
               }
               else {
                 bookSort.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -138,7 +138,7 @@ class _SubjectWidgetState extends State<SubjectWidget> {
               var bookSort = [...event.listBook];
               if (event.sort == EnumSort.outstanding) {
                 bookSort.sort(
-                    (a, b) => int.parse(b.view).compareTo(int.parse(a.view)));
+                    (a, b) => b.view.compareTo(a.view));
               }
               else{
                 bookSort.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -259,6 +259,35 @@ class _SubjectWidgetState extends State<SubjectWidget> {
                 ),
               );
             }),
+      ),
+    );
+  }
+  
+  _buildEmpty() {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Container(
+                width: MediaQuery.of(context).size.width * 0.7,
+                alignment: Alignment.center,
+                child: const Text(
+                  'Danh sách trống! Đợi chúng tôi thêm chủ đề này vào nhé.',
+                  maxLines: 2,
+                  style: TextStyle(fontSize: 20),
+                )),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            child: Text(
+              '^_^',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          
+        ],
       ),
     );
   }

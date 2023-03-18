@@ -1,11 +1,13 @@
 import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/util/api.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../models/book.dart';
+import '../views/details/details_book.dart';
 
 class CustomSearch extends SearchDelegate {
-  List allBook = ['Tôi ngu', 'Naruto', 'Doraemon'];
+  BooksApi api = BooksApi();
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -28,39 +30,16 @@ class CustomSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-
-    List<String> matchQuery = [];
-    for(var item in allBook){
-      if(item.toLowerCase().contains(query.toLowerCase())){
-        matchQuery.add(item);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context , index){
-        var result =  matchQuery[index];
-         return InkWell(
-            onTap: () {},
-            child: ListTile(
-              title: Text(result),
-              trailing: const Icon(Icons.arrow_forward_ios_rounded),
-            ),
-          );
-      });
+    return Container();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var item in allBook) {
-      if (item.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(item);
-      }
-    }
+    var url = '${api.bookUrlKey}?q=$query';
     return Container(
       color: Colors.transparent,
       child: FutureBuilder<List<Book>?>(
-        future: BooksApi().getBooks(),
+        future: api.getFilterBooks(url),
         builder: (context, snapshot) {
           if (query.isEmpty) return buildNoSuggestions();
 
@@ -78,25 +57,35 @@ class CustomSearch extends SearchDelegate {
       ),
     );
   }
-  
+
   Widget buildNoSuggestions() {
     return Container();
   }
-  
+
   Widget buildSuggestionsSuccess(List<Book>? data) {
     return ListView.builder(
         itemCount: data!.length,
         itemBuilder: (context, index) {
           var result = data[index];
           return InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: DetailsBook(
+                        book: result,
+                      )));
+            },
             child: Column(
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: result.image != '' ? NetworkImage(result.image) : null,
+                    backgroundImage:
+                        result.image != '' ? NetworkImage(result.image) : null,
                   ),
                   title: Text(result.title),
+                  subtitle: Text(result.author),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded),
                 ),
                 Divider(color: ThemeConfig.authorColor, indent: 20)
