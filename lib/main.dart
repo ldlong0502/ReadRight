@@ -2,6 +2,7 @@ import 'package:ebook/view_models/appbar_provider.dart';
 import 'package:ebook/view_models/audio_provider.dart';
 import 'package:ebook/view_models/details_provider.dart';
 import 'package:ebook/view_models/home_provider.dart';
+import 'package:ebook/view_models/search_provider.dart';
 import 'package:ebook/view_models/speed_provider.dart';
 import 'package:ebook/view_models/subject_provider.dart';
 import 'package:ebook/views/mainScreen/main_screen.dart';
@@ -31,6 +32,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => BookReadingProvider()),
         ChangeNotifierProvider(create: (_) => SpeedProvider()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => SubjectProvider()),
       ],
       child: const MyApp(),

@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import '../theme/theme_config.dart';
 
 class AudioImage extends StatelessWidget {
-  const AudioImage({super.key, required this.audioBook});
+  const AudioImage({super.key, required this.audioBook, required this.size});
   final AudioBook audioBook;
+  final double size;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -25,7 +26,7 @@ class AudioImage extends StatelessWidget {
           child: Icon(
             Icons.play_circle_filled_sharp,
             color: ThemeConfig.lightPrimary,
-            size: 50,
+            size: size,
           ),
         ))
       ],

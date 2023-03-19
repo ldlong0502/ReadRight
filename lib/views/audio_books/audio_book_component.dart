@@ -109,6 +109,7 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
             padding: const EdgeInsets.only(left: 20.0),
             child: AudioImage(
               audioBook: book,
+              size: 50,
             ),
           ),
           Positioned(
@@ -151,6 +152,7 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
                         flex: 1,
                         child: AudioImage(
                           audioBook: book,
+                            size: 50,
                         )),
                     Expanded(
                         flex: 2,
