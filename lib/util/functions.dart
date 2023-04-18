@@ -35,7 +35,8 @@ class Functions {
     }
   }
 
-  Future<Color> getImagePalette(ImageProvider imageProvider) async {
+  Future<Color> getImagePalette(String url) async {
+    var imageProvider = NetworkImage(url);
     final PaletteGenerator paletteGenerator =
         await PaletteGenerator.fromImageProvider(imageProvider);
     return paletteGenerator.dominantColor!.color;
@@ -43,7 +44,12 @@ class Functions {
 
   void openEpub(filePath , context , Book book) async {
    print(hiveBookReading.get(book.id)) ;
-    var data =BookDownLoad.fromJson(hiveBookReading.get(book.id));
+    var data = BookDownLoad.fromJson(hiveBookReading.get(book.id) ?? { 
+      'item': book.toJson(),
+      'location': '',
+      'dateDown': DateTime.now().millisecondsSinceEpoch,
+      'dateReadRecently': DateTime.now().millisecondsSinceEpoch,
+    });
 
 
     VocsyEpub.setConfig(
@@ -58,10 +64,8 @@ class Functions {
     // get current locator
     VocsyEpub.locatorStream.listen((locator) {
       print(locator.toString());
-      hiveBookReading.put(book.id, {
-        'item': book.toJson(),
-        'location': locator
-      });
+      var item = BookDownLoad(item: book, location: locator , dateDown: data.dateDown , dateReadRecently: DateTime.now().millisecondsSinceEpoch);
+      hiveBookReading.put(book.id, item.toJson());
     });
 
     VocsyEpub.open(
@@ -78,4 +82,5 @@ class Functions {
 
     return '${appDocDir!.path}/${book.id}.epub';
   }
+
 }

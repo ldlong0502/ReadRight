@@ -1,6 +1,9 @@
 import 'package:ebook/components/audio_image.dart';
 import 'package:ebook/components/build_body.dart';
+import 'package:ebook/util/route.dart';
 import 'package:ebook/view_models/search_provider.dart';
+import 'package:ebook/views/audio_books/detail_audio_book.dart';
+import 'package:ebook/views/ebook/details_ebook.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -178,7 +181,7 @@ class _SearchResultState extends State<SearchResult> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
             _buildTitle('Sách nói'),
-            _buildAmount(event.listAudioBooks.length),
+            _buildAmount(event, 1 , event.listAudioBooks.length),
           ],),
           _buildAudioBook(event),
           const SizedBox(
@@ -188,7 +191,7 @@ class _SearchResultState extends State<SearchResult> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildTitle('Ebook'),
-              _buildAmount(event.listBooks.length),
+              _buildAmount(event , 2 , event.listBooks.length),
             ],
           ),
           _buildEbook(event),
@@ -200,16 +203,14 @@ class _SearchResultState extends State<SearchResult> {
   _buildTitle(String title ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Flexible(
-        child: Text(
-          title,
-          maxLines: 2,
-          style: TextStyle(
-            fontSize: 18.0,
-            
-            color: ThemeConfig.lightAccent,
-            fontWeight: FontWeight.bold,
-          ),
+      child: Text(
+        title,
+        maxLines: 2,
+        style: TextStyle(
+          fontSize: 18.0,
+          
+          color: ThemeConfig.lightAccent,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -221,13 +222,18 @@ class _SearchResultState extends State<SearchResult> {
       itemCount: event.listAudioBooks.length,
       itemBuilder: (context , index) {
       var item = event.listAudioBooks[index];
-      return ListTile(
-        leading: AudioImage(audioBook: item , size: 25, ),
-        title: Text(item.title , style: const TextStyle(
-          fontWeight: FontWeight.bold
-        ),),
-        subtitle: Text(item.author),
-        visualDensity:  const VisualDensity(vertical: 4),
+      return InkWell(
+        onTap: () {
+              MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: item));
+            },
+        child: ListTile(
+          leading: AudioImage(audioBook: item , size: 25, ),
+          title: Text(item.title , style: const TextStyle(
+            fontWeight: FontWeight.bold
+          ),),
+          subtitle: Text(item.author),
+          visualDensity:  const VisualDensity(vertical: 4),
+        ),
       );
     });
   }
@@ -238,16 +244,21 @@ class _SearchResultState extends State<SearchResult> {
         itemCount: event.listBooks.length,
         itemBuilder: (context, index) {
           var item = event.listBooks[index];
-          return ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(item.image,fit: BoxFit.fill,width: 60,)),
-            title: Text(
-              item.title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+          return InkWell(
+            onTap: () {
+              MyRouter.pushAnimation(context, DetailsEbook(book: item));
+            },
+            child: ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(item.image,fit: BoxFit.fill,width: 60,)),
+              title: Text(
+                item.title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(item.author),
+              visualDensity: const VisualDensity(vertical: 4),
             ),
-            subtitle: Text(item.author),
-            visualDensity: const VisualDensity(vertical: 4),
           );
         });
         
@@ -268,15 +279,20 @@ class _SearchResultState extends State<SearchResult> {
     );
   }
   
-  _buildAmount(int length) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Text(
-        'Kết quả ($length)',
-        style: TextStyle(
-          fontSize: 18.0,
-          color: ThemeConfig.fourthAccent,
-          fontWeight: FontWeight.bold,
+  _buildAmount(SearchProvider event, int index, int length ) {
+    return InkWell(
+      onTap: (){
+        event.setCurrentIndex(index);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Text(
+          'Xem kết quả ($length)',
+          style: TextStyle(
+            fontSize: 18.0,
+            color: ThemeConfig.fourthAccent,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

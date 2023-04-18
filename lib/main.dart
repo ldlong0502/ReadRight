@@ -1,7 +1,10 @@
 import 'package:ebook/view_models/appbar_provider.dart';
 import 'package:ebook/view_models/audio_provider.dart';
-import 'package:ebook/view_models/details_provider.dart';
+import 'package:ebook/view_models/details_audioBook_provider.dart';
+import 'package:ebook/view_models/details_ebook_provider.dart';
+import 'package:ebook/view_models/history_provider.dart';
 import 'package:ebook/view_models/home_provider.dart';
+import 'package:ebook/view_models/library_provider.dart';
 import 'package:ebook/view_models/search_provider.dart';
 import 'package:ebook/view_models/speed_provider.dart';
 import 'package:ebook/view_models/subject_provider.dart';
@@ -14,11 +17,12 @@ import 'theme/theme_config.dart';
 import 'util/const.dart';
 import 'view_models/app_provider.dart';
 import 'view_models/book_mark_provider.dart';
-import 'view_models/book_reading_provider.dart';
+import 'view_models/book_history_provider.dart';
 
 void main() async {
   await Hive.initFlutter();
   await Hive.openBox('bookmark_books');
+  await Hive.openBox('bookmark_audioBooks');
   await Hive.openBox('book_reading_books');
   await Hive.openBox('audio_books');
   runApp(
@@ -27,11 +31,14 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => AppBarProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
-        ChangeNotifierProvider(create: (_) => DetailsProvider()),
+        ChangeNotifierProvider(create: (_) => DetailsEbookProvider()),
+        ChangeNotifierProvider(create: (_) => DetailsAudioBookProvider()),
         ChangeNotifierProvider(create: (_) => BookMarkProvider()),
-        ChangeNotifierProvider(create: (_) => BookReadingProvider()),
+        ChangeNotifierProvider(create: (_) => BookHistoryProvider()),
+         ChangeNotifierProvider(create: (_) => HistoryProvider()),
         ChangeNotifierProvider(create: (_) => SpeedProvider()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+          ChangeNotifierProvider(create: (_) => LibraryProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => SubjectProvider()),
       ],

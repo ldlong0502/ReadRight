@@ -9,7 +9,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../theme/theme_config.dart';
-import '../details/details_book.dart';
+import '../ebook/details_ebook.dart';
 
 class BookMark extends StatefulWidget {
   const BookMark({super.key});
@@ -56,7 +56,7 @@ class _BookMarkState extends State<BookMark> {
                         context,
                         PageTransition(
                             type: PageTransitionType.rightToLeft,
-                            child: DetailsBook(book: item,)));
+                            child: DetailsEbook(book: item,)));
                   },
                   child: Slidable(
                     key: ValueKey<Book>(item),

@@ -1,16 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ebook/models/audio_book.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/book.dart';
 
-class BookReadingProvider extends ChangeNotifier {
+class BookHistoryProvider extends ChangeNotifier {
   List<Book> bookReadingList = [];
+  List<AudioBook> audioBookList = [];
   bool loading = false;
   final hiveBookReading = Hive.box('book_reading_books');
-
+  final hiveAudioBook = Hive.box('audio_books');
 
   setLoading(value) {
     loading = value;
@@ -32,7 +34,7 @@ class BookReadingProvider extends ChangeNotifier {
       Book book = Book.fromJson(item["item"]);
       list.insert(0,book);
     }
-    list.sort((a,b) => b.addedDate.compareTo(a.addedDate));
+    
     bookReadingList = [...list];
     notifyListeners();
   }

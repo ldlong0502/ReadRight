@@ -3,13 +3,12 @@ import 'package:ebook/components/build_body.dart';
 import 'package:ebook/models/book.dart';
 import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/util/route.dart';
+import 'package:ebook/views/ebook/details_ebook.dart';
 import 'package:ebook/views/ebook/ebook_subject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../view_models/home_provider.dart';
-import '../details/details_book.dart';
 
 class EbookComponent extends StatefulWidget {
   const EbookComponent({super.key});
@@ -47,7 +46,6 @@ class _EbookComponentState extends State<EbookComponent> {
         shrinkWrap: true,
 
         children: <Widget>[
-          const SizedBox(height: 20.0),
           _buildSectionTitle('Danh mục'),
           const SizedBox(height: 20.0),
           _buildGenre(homeProvider, size),
@@ -69,7 +67,12 @@ class _EbookComponentState extends State<EbookComponent> {
     final list = homeProvider.autoSubject.books;
      final listWidget = List.generate(
         list.length, (index) => _buildBook(list[index] , index),)
-      ..add(IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_forward_rounded)));
+      ..add(IconButton(onPressed: () {}, icon: CircleAvatar(
+            backgroundColor: ThemeConfig.fourthAccent,
+            child: const Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+            ))));
     return Container(
       height: 170,
       
@@ -106,15 +109,19 @@ class _EbookComponentState extends State<EbookComponent> {
   Widget _buildBook(Book book , int index) {
     return InkWell(
       onTap: (){
-        MyRouter.pushAnimation(context, DetailsBook(book: book));
+        MyRouter.pushAnimation(context, DetailsEbook(book: book));
       },
       child: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(book.image , fit: BoxFit.cover, width: 120,)),
+          Hero(
+            transitionOnUserGestures: true,
+            tag: book.image,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(book.image , fit: BoxFit.cover, width: 120,)),
+            ),
           ),
            Positioned(
             bottom: 10,
@@ -124,7 +131,7 @@ class _EbookComponentState extends State<EbookComponent> {
               fontSize: 50,
               fontWeight: FontWeight.bold
             ),) )
-    
+        
         ],
       ),
     );
@@ -142,79 +149,77 @@ class _EbookComponentState extends State<EbookComponent> {
         return Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.rightToLeft,
-                        child: DetailsBook(
-                          book: book,
-                        )));
+                 MyRouter.pushAnimation(context, DetailsEbook(book: book));
               },
-              child: SizedBox(
-                height: 180,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        flex: 1,
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          child: Image.network(
-                            book.image,
-                            fit: BoxFit.fill,
-                          ),
-                        )),
-                    Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 180,
-                              child: Text(
-                                book.title,
-                                maxLines: 2,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    overflow: TextOverflow.ellipsis),
+              child: Hero(
+                 tag: book.title,
+                transitionOnUserGestures: true,
+                child: SizedBox(
+                  height: 180,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                          flex: 1,
+                          child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            child: Image.network(
+                              book.image,
+                              fit: BoxFit.cover,
+                            ),
+                          )),
+                      Expanded(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 180,
+                                child: Text(
+                                  book.title,
+                                  maxLines: 2,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            SizedBox(
-                              width: 180,
-                              child: Text(
-                                book.author,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: ThemeConfig.lightAccent,
-                                    fontWeight: FontWeight.bold,
-                                    overflow: TextOverflow.ellipsis),
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            SizedBox(
-                              width: 180,
-                              child: Text(
-                                book.description,
-                                maxLines: 3,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: ThemeConfig.authorColor,
-                                    overflow: TextOverflow.ellipsis),
+                              SizedBox(
+                                width: 180,
+                                child: Text(
+                                  book.author,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: ThemeConfig.lightAccent,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
                               ),
-                            ),
-                          ],
-                        ))
-                  ],
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              SizedBox(
+                                width: 180,
+                                child: Text(
+                                  book.description,
+                                  maxLines: 3,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: ThemeConfig.authorColor,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
+                              ),
+                            ],
+                          ))
+                    ],
+                  ),
                 ),
               ),
             ));

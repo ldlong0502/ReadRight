@@ -7,10 +7,16 @@ import 'package:flutter/scheduler.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../../components/audio_image.dart';
 import '../../components/two_side_rounded_button.dart';
+import '../../models/audio_book.dart';
+import '../../models/book.dart';
 import '../../util/dialogs.dart';
+import '../../util/route.dart';
+import '../../view_models/audio_provider.dart';
 import '../../view_models/home_provider.dart';
-import '../details/details_book.dart';
+import '../audio_books/detail_audio_book.dart';
+import '../ebook/details_ebook.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -44,26 +50,118 @@ class _HomeState extends State<Home> {
     return RefreshIndicator(
       onRefresh: () => homeProvider.getBooks(),
       child: ListView(
-        physics: const BouncingScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
         children: <Widget>[
           const SizedBox(height: 10.0),
-          _buildSectionTitle('Danh mục'),
-          const SizedBox(height: 10.0),
-          _buildGenre(homeProvider, size),
            const SizedBox(height: 10.0),
           _buildSectionTitle('Top 5 trending'),
           _buildSlider(homeProvider, size),
           const SizedBox(height: 20.0),
-          _buildSectionTitle('Mới nhất'),
+          _buildSectionTitle('Những cuốn sách hay bạn nên nghe'),
           const SizedBox(height: 10.0),
-          _buildRecentBooks(homeProvider),
+          _buildAudioBookSlider(),
+          const SizedBox(height: 20.0),
+          _buildSectionTitle('Những cuốn sách hay bạn nên đọc'),
+          const SizedBox(height: 10.0),
+          _buildEbookSlider(homeProvider),
           // SizedBox(height: 20.0),
           // _buildRecentBooks('Recently Added'),
         ],
       ),
     );
   }
-
+  Widget _buildAudioBook( AudioBook book, int index) {
+    return InkWell(
+      onTap: () async {
+        MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: book));
+      },
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: AudioImage(
+              audioBook: book,
+              size: 50,
+            ),
+          ),
+          Positioned(
+              bottom: 0,
+              left: 30,
+              child: Text(
+                (index + 1).toString(),
+                style: TextStyle(
+                    color: ThemeConfig.fourthAccent,
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold),
+              ))
+        ],
+      ),
+    );
+  }
+  _buildAudioBookSlider() {
+    final list = context.read<AudioProvider>().top5;
+    final listWidget = List.generate(
+      list.length,
+      (index) => _buildAudioBook(list[index], index),
+    )..add(IconButton(
+        onPressed: () {}, icon: const Icon(Icons.arrow_forward_rounded)));
+    return Container(
+        height: 170,
+        width: double.infinity,
+        margin: const EdgeInsets.only(top: 10),
+        child: ListView(
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            children: listWidget));
+  }
+  Widget _buildEbook(Book book, int index) {
+    return InkWell(
+      onTap: () {
+        MyRouter.pushAnimation(context, DetailsEbook(book: book));
+      },
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  book.image,
+                  fit: BoxFit.cover,
+                  width: 120,
+                )),
+          ),
+          Positioned(
+              bottom: 10,
+              left: 30,
+              child: Text(
+                (index + 1).toString(),
+                style: TextStyle(
+                    color: ThemeConfig.fourthAccent,
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold),
+              ))
+        ],
+      ),
+    );
+  }
+  _buildEbookSlider(HomeProvider homeProvider) {
+    final list = homeProvider.autoSubject.books;
+    final listWidget = List.generate(
+      list.length,
+      (index) => _buildEbook(list[index], index),
+    )..add(IconButton(
+        onPressed: () {}, icon: const Icon(Icons.arrow_forward_rounded)));
+    return Container(
+        height: 170,
+        width: double.infinity,
+        margin: const EdgeInsets.only(top: 10),
+        child: ListView(
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            children: listWidget));
+  }
   _buildSlider(HomeProvider homeProvider, Size size) {
     final list = homeProvider.autoSubject.books;
     return Container(
@@ -86,7 +184,7 @@ class _HomeState extends State<Home> {
                       context,
                       PageTransition(
                           type: PageTransitionType.rightToLeft,
-                          child: DetailsBook(
+                          child: DetailsEbook(
                             book: e,
                           ))).then((value) => setState(() {}));
                 },
@@ -224,7 +322,7 @@ class _HomeState extends State<Home> {
                     context,
                     PageTransition(
                         type: PageTransitionType.rightToLeft,
-                        child: DetailsBook(
+                        child: DetailsEbook(
                           book: book,
                         )));
               },
@@ -298,39 +396,5 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _buildGenre(HomeProvider homeProvider, Size size) {
-    var listGenre = [
-      {'name': 'Lịch sử', 'asset': 'assets/images/history.png'},
-      {'name': 'Tiên hiệp - huyền huyễn', 'asset': 'assets/images/fairy.png'},
-      {'name': 'Văn học', 'asset': 'assets/images/literature.png'},
-      {'name': 'Truyện', 'asset': 'assets/images/story.png'},
-      {'name': 'tài chính', 'asset': 'assets/images/financial.png'}
-    ];
-    return SizedBox(
-        height: listGenre.length / 5 * 50,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: listGenre.map((e) => Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(10.0),
-               decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Image.asset(e['asset']! , height: 15,),
-                    const SizedBox(width: 5,),
-                    Text(e['name']! , style: const TextStyle(fontSize: 12),),
-                  ],
-                ),
-              ),
-            )).toList()
-          ),
-        ));
-  }
+  
 }

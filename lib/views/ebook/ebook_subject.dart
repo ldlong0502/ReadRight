@@ -1,4 +1,4 @@
-import 'package:ebook/views/read/subject_widget.dart';
+import 'package:ebook/views/home/subject_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme/theme_config.dart';
@@ -42,7 +42,7 @@ class _EbookSubjectState extends State<EbookSubject> {
                               Navigator.pop(context);
                             },
                             icon: const Icon(
-                              Icons.arrow_back_ios,
+                              Icons.arrow_back,
                               color: Colors.white,
                             )),
                       ),
@@ -83,7 +83,7 @@ class _EbookSubjectState extends State<EbookSubject> {
             top: size.height * 0.12,
             left: 0,
             right: 0,
-            height: size.height ,
+            bottom: 0 ,
             child: Container(
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),

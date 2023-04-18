@@ -4,7 +4,7 @@ import '../theme/theme_config.dart';
 
 class ChapterDialog extends StatefulWidget {
   const ChapterDialog({super.key, required this.listMp3, required this.index, required this.onChooseChapter});
-  final List<Map<String, dynamic>> listMp3;
+  final List<Map<dynamic, dynamic>> listMp3;
   final int index;
   final Function onChooseChapter;
 
@@ -94,7 +94,7 @@ class _ChapterDialogState extends State<ChapterDialog> {
                 index = idx;
               });
               await widget.onChooseChapter(idx);
-              
+              if(!mounted) return;
               Navigator.pop(context);
             },
             child: Container(

@@ -2,6 +2,7 @@ import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/view_models/search_provider.dart';
 import 'package:ebook/views/search_page/search_result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import '../../util/const.dart';
@@ -15,7 +16,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController controller = TextEditingController();
-  int currentIndex = 0;
   var listMenu = [
     {
       'title': 'Tất cả',
@@ -31,84 +31,97 @@ class _SearchPageState extends State<SearchPage> {
     }
   ];
   @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) {
+        Provider.of<SearchProvider>(context, listen: false).setCurrentIndex(0);
+      },
+    );
+  }
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Container(
-      decoration: Constants.linearDecoration,
-      child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            automaticallyImplyLeading: false,
-            toolbarHeight: 70,
-            title: _buildSearch(),
-          ),
-          body: Stack(
-            children: [
-              Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: size.height * 0.15,
-                  child: Container(
-                    color: Colors.transparent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: listMenu.asMap().entries.map((e) => InkWell(
-                        focusColor: Colors.transparent,
-                        onTap: () {
-                          setState(() {
-                            if(currentIndex == e.key) return;
-                            currentIndex = e.key;
-                          });
-                        },
-                        child: Container(
-                          width: 100,
-                          color: Colors.transparent,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: e.key == currentIndex ?  Colors.white : Colors.grey,
-                                
-                                child: Image.asset(e.value['image'] as String , fit: BoxFit.cover,height: 40),
+    return Consumer<SearchProvider>(
+        builder: (context, event , _) {
+        return Container(
+          decoration: Constants.linearDecoration,
+          child: Scaffold(
+              backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                automaticallyImplyLeading: false,
+                toolbarHeight: 70,
+                title: _buildSearch(event),
+              ),
+              body: Stack(
+                children: [
+                  Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: size.height * 0.15,
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: listMenu.asMap().entries.map((e) => InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+                             if (event.currentIndex == e.key) return;
+                              event.setCurrentIndex(e.key);
+                            },
+                            child: Container(
+                              width: 100,
+                              color: Colors.transparent,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: e.key == event.currentIndex ?  Colors.white : Colors.grey,
+                                    
+                                    child: Image.asset(e.value['image'] as String , fit: BoxFit.cover,height: 40),
+                                  ),
+                                  const SizedBox(height: 10,),
+                                  Text((e.value['title'] as String).toUpperCase() , style: TextStyle(
+                                    color: e.key == event.currentIndex
+                                                  ? Colors.white
+                                                  : Colors.grey[400],
+                                    fontSize: 14
+                                  ),)
+                                ],
                               ),
-                              const SizedBox(height: 10,),
-                              Text((e.value['title'] as String).toUpperCase() , style: TextStyle(
-                                color: e.key == currentIndex
-                                              ? Colors.white
-                                              : Colors.grey[400],
-                                fontSize: 14
-                              ),)
-                            ],
+                            ),
+                          )).toList(),
+                        ),
+                      )),
+                  Positioned(
+                      top: size.height * 0.15,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
                           ),
                         ),
-                      )).toList(),
-                    ),
-                  )),
-              Positioned(
-                  top: size.height * 0.15,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
+                        child: SearchResult(index: event.currentIndex ),
                       ),
-                    ),
-                    child: SearchResult(index: currentIndex ),
-                  ),
-                )
-            ],
-          )),
+                    )
+                ],
+              )),
+        );
+      }
     );
   }
 
-  _buildSearch() {
+  _buildSearch(SearchProvider event) {
     return Row(
       children: [
         Expanded(
@@ -132,7 +145,7 @@ class _SearchPageState extends State<SearchPage> {
                 prefixIcon: Icon(Icons.search),
               ),
               onChanged: (value)  {
-                context.read<SearchProvider>().searchBook(controller.text);
+                event.searchBook(controller.text);
               },
             ),
           ),

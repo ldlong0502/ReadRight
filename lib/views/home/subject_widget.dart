@@ -2,7 +2,7 @@
 
 
 import 'package:ebook/util/enum.dart';
-import 'package:ebook/views/details/details_book.dart';
+import 'package:ebook/views/ebook/details_ebook.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +83,7 @@ class _SubjectWidgetState extends State<SubjectWidget> {
                       context,
                       PageTransition(
                           type: PageTransitionType.rightToLeft,
-                          child: DetailsBook(book: item,)));
+                          child: DetailsEbook(book: item,)));
                 },
                 child: Container(
                   margin: const EdgeInsets.all(0),
@@ -151,7 +151,7 @@ class _SubjectWidgetState extends State<SubjectWidget> {
                       context,
                       PageTransition(
                           type: PageTransitionType.rightToLeft,
-                          child: DetailsBook(book: item,)));
+                          child: DetailsEbook(book: item,)));
                 },
                 child: Container(
                   height: 120,

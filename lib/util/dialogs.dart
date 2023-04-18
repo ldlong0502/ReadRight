@@ -2,9 +2,17 @@ import 'dart:io';
 
 import 'package:ebook/components/chapter_dialog.dart';
 import 'package:ebook/components/download_alert.dart';
+import 'package:ebook/models/audio_book.dart';
 import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/util/enum.dart';
+import 'package:ebook/util/route.dart';
+import 'package:ebook/view_models/app_provider.dart';
+import 'package:ebook/view_models/audio_provider.dart';
+import 'package:ebook/view_models/library_provider.dart';
+import 'package:ebook/views/audio_books/detail_audio_book.dart';
+import 'package:ebook/views/ebook/details_ebook.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 
 import '../components/custom_alert.dart';
@@ -89,10 +97,11 @@ class Dialogs {
   }
 
   showSetUpBottomDialog(BuildContext context) {
+     var appContext = context.read<AppProvider>().appContext;
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) {
+        context: appContext,
+        builder: (appContext) {
           return Container(
             height: 400,
             decoration: BoxDecoration(
@@ -105,7 +114,7 @@ class Dialogs {
                     topRight: Radius.circular(20))),
             child: Column(
               children: [
-                _buildTitle(context),
+                _buildTitle(appContext , 'Thiết lập'),
                 const SizedBox(
                   height: 10,
                 ),
@@ -119,8 +128,11 @@ class Dialogs {
         });
   }
 
-  showChapterBottomDialog(BuildContext context,
-      List<Map<String, dynamic>> listMp3, int index, Function onChooseChapter) {
+  showChapterBottomDialog(
+      BuildContext context,
+      List<Map<dynamic, dynamic>> listMp3,
+      int index,
+      Function onChooseChapter) {
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
         context: context,
@@ -146,25 +158,299 @@ class Dialogs {
         });
   }
 
-  _buildTitle(context) {
-    return SizedBox(
-      height: 50,
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Expanded(
-          child: Container(),
+  showDownloadsDialog(BuildContext context , Book book) {
+    var appContext = context.read<AppProvider>().appContext;
+    var actionDownloads = [
+      {
+        'icon': Icon(
+          Icons.menu_book_rounded,
+          color: ThemeConfig.thirdAccent,
         ),
-        const Expanded(
-          child: Center(
-            child: Text(
-              'Thiết lập',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        'title': 'Đọc ngay',
+        'onTap': () async {
+          Navigator.of(appContext).pop();
+          Dialogs().showEpub(context, book);
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.info,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Thông tin sách',
+        'onTap': () {
+          Navigator.of(appContext).pop();
+          MyRouter.pushAnimation(context, DetailsEbook(book: book));
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.share,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Chia sẻ',
+        'onTap': () {
+         Navigator.of(appContext).pop();
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.remove_circle_outline_rounded,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Xóa khỏi danh sách đã tải/đang đọc',
+        'onTap': () {
+          Navigator.of(appContext).pop();
+          context.read<LibraryProvider>().removeBookDownload(book);
+        }
+      }
+    ];
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: appContext,
+        builder: (appContext) {
+          return Container(
+            height: MediaQuery.of(appContext).size.height * 0.4,
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                ),
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                _buildTitle(appContext, 'Tùy chọn thêm'),
+                ListView(
+                  shrinkWrap: true,
+                  children: actionDownloads
+                      .asMap()
+                      .entries
+                      .map((e) => InkWell(
+                        onTap: e.value['onTap'] as Function(),
+                        child: ListTile(
+                          leading: e.value['icon'] as Widget,
+                          title: Text(e.value['title'] as String),
+                        ),
+                      ))
+                      .toList(),
+                ),
+              ],
             ),
-          ),
+          );
+        });
+  }
+
+  showFavoritesDialog(BuildContext context, dynamic item) {
+    var appContext = context.read<AppProvider>().appContext;
+    var actionFavorites = [
+      {
+        'icon': Icon(
+         item is Book ? Icons.menu_book_rounded : Icons.headphones,
+          color: ThemeConfig.thirdAccent,
         ),
-        Expanded(
-          child: Center(
+        'title': item is Book ? 'Đọc ngay' : 'Nghe ngay',
+        'onTap': () async {
+          Navigator.of(appContext).pop();
+          if(item is Book) {
+             Dialogs().showEpub(context, item);
+          }
+          else if (item is AudioBook){
+            context.read<AudioProvider>().createPlayer(item, AudioPlayer(), context);
+          }
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.info,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Thông tin sách',
+        'onTap': () {
+          Navigator.of(appContext).pop();
+          if(item is Book){
+            MyRouter.pushAnimation(context, DetailsEbook(book: item));
+          }
+          else if (item is AudioBook){
+              MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: item));
+          }
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.share,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Chia sẻ',
+        'onTap': () {
+          Navigator.of(appContext).pop();
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.remove_circle_outline_rounded,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Xóa khỏi danh sách yêu thích',
+        'onTap': () {
+          Navigator.of(appContext).pop();
+          if(item is Book){
+             context.read<LibraryProvider>().removeBookFavorites(item);
+          }
+         else if (item is AudioBook){
+          context.read<LibraryProvider>().removeAudioBookFavorites(item);
+         }
+        }
+      }
+    ];
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: appContext,
+        builder: (appContext) {
+          return Container(
+            height: MediaQuery.of(appContext).size.height * 0.4,
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                ),
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                _buildTitle(appContext, 'Tùy chọn thêm'),
+                ListView(
+                  shrinkWrap: true,
+                  children: actionFavorites
+                      .asMap()
+                      .entries
+                      .map((e) => InkWell(
+                            onTap: e.value['onTap'] as Function(),
+                            child: ListTile(
+                              leading: e.value['icon'] as Widget,
+                              title: Text(e.value['title'] as String),
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  showHistoryDialog(BuildContext context, dynamic item) {
+
+    var appContext = context.read<AppProvider>().appContext;
+    var actionFavorites = [
+      {
+        'icon': Icon(
+          item is Book ? Icons.menu_book_rounded : Icons.headphones,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': item is Book ? 'Đọc ngay' : 'Nghe ngay',
+        'onTap': () async {
+          Navigator.of(appContext).pop();
+          if (item is Book) {
+            Dialogs().showEpub(context, item);
+          } else if (item is AudioBook) {
+            context
+                .read<AudioProvider>()
+                .createPlayer(item, AudioPlayer(), context);
+          }
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.info,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Thông tin sách',
+        'onTap': () {
+          Navigator.of(appContext).pop();
+          if (item is Book) {
+            MyRouter.pushAnimation(context, DetailsEbook(book: item));
+          } else if (item is AudioBook) {
+            MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: item));
+          }
+        }
+      },
+      {
+        'icon': Icon(
+          Icons.share,
+          color: ThemeConfig.thirdAccent,
+        ),
+        'title': 'Chia sẻ',
+        'onTap': () {
+          Navigator.of(appContext).pop();
+        }
+      },
+    ];
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: appContext,
+        builder: (appContext) {
+          return Container(
+            height: MediaQuery.of(appContext).size.height * 0.35,
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                ),
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                _buildTitle(appContext, 'Tùy chọn thêm'),
+                ListView(
+                  shrinkWrap: true,
+                  children: actionFavorites
+                      .asMap()
+                      .entries
+                      .map((e) => InkWell(
+                            onTap: e.value['onTap'] as Function(),
+                            child: ListTile(
+                              leading: e.value['icon'] as Widget,
+                              title: Text(e.value['title'] as String),
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+  _buildTitle(context, String s) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      height: 50,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+       
+         Center(
+           child: Text(
+             s,
+             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold , color: ThemeConfig.lightAccent),
+           ),
+         ),
+        Center(
+          child: CircleAvatar(
+            backgroundColor: Colors.grey[300],
+            radius: 18,
             child: IconButton(
-              icon: const Icon(Icons.clear_outlined),
+              icon: const Icon(Icons.clear_outlined , size: 18,),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -258,9 +544,10 @@ class Dialogs {
           padding: const EdgeInsets.only(left: 20),
           child: Text(
             s,
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
+              color: ThemeConfig.thirdAccent
             ),
           ),
         ),
@@ -274,10 +561,7 @@ class Dialogs {
   }
 
   showEpub(context, Book book) {
-    if (book.epub == '') {
-      print('sorry');
-      return;
-    }
+   
     showDialog(
         context: context,
         builder: (context) => DownloadAlert(

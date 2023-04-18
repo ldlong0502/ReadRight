@@ -3,13 +3,24 @@ import 'package:ebook/theme/theme_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppProvider extends ChangeNotifier {
-  AppProvider() {
-    checkTheme();
-  }
-
+  BuildContext? _appContext;
   ThemeData theme = ThemeConfig.lightTheme;
   Key? key = UniqueKey();
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  BuildContext get appContext => _appContext!;
+
+  int _pageIndex = 0;
+  int get pageIndex => _pageIndex;
+  void setPageIndex(value) {
+    _pageIndex = value;
+    notifyListeners();
+  }
+
+  void setContext(value) {
+    _appContext = value;
+    notifyListeners();
+  }
 
   void setKey(value) {
     key = value;

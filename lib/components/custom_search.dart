@@ -1,10 +1,11 @@
 import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/util/api.dart';
+import 'package:ebook/util/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../models/book.dart';
-import '../views/details/details_book.dart';
+import '../views/ebook/details_ebook.dart';
 
 class CustomSearch extends SearchDelegate {
   BooksApi api = BooksApi();
@@ -68,13 +69,14 @@ class CustomSearch extends SearchDelegate {
         itemBuilder: (context, index) {
           var result = data[index];
           return InkWell(
-            onTap: () {
+            onTap: ()  { 
               Navigator.push(
                   context,
                   PageTransition(
                       type: PageTransitionType.rightToLeft,
-                      child: DetailsBook(
+                      child: DetailsEbook(
                         book: result,
+
                       )));
             },
             child: Column(

@@ -1,6 +1,8 @@
+import 'package:ebook/view_models/audio_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 
 class Controls extends StatelessWidget {
   const Controls({super.key, required this.audioPlayer, required this.isMiniPlayer});
@@ -26,6 +28,9 @@ class Controls extends StatelessWidget {
                 child: StreamBuilder<PlayerState>(
                     stream: audioPlayer.playerStateStream,
                     builder: (context, snapshot) {
+                      context
+                          .read<AudioProvider>()
+                          .setAudioHistory(audioPlayer);
                       final playerState = snapshot.data;
                       final processingState = playerState?.processingState;
                       final playing = playerState?.playing;
@@ -68,10 +73,14 @@ class Controls extends StatelessWidget {
           child: StreamBuilder<PlayerState>(
               stream: audioPlayer.playerStateStream,
               builder: (context, snapshot) {
+                context
+                          .read<AudioProvider>()
+                          .setAudioHistory(audioPlayer);
                 final playerState = snapshot.data;
                 final processingState = playerState?.processingState;
                 final playing = playerState?.playing;
                 if (!(playing ?? false)) {
+                  
                   return IconButton(
                       onPressed: audioPlayer.play,
                       iconSize: 40,

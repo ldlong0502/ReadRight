@@ -3,6 +3,7 @@ import 'package:ebook/models/audio_book.dart';
 import 'package:ebook/theme/theme_config.dart';
 import 'package:ebook/util/route.dart';
 import 'package:ebook/view_models/audio_provider.dart';
+import 'package:ebook/views/audio_books/detail_audio_book.dart';
 import 'package:ebook/views/ebook/ebook_subject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -68,7 +69,10 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
       list.length,
       (index) => _buildBook(event, list[index], index),
     )..add(IconButton(
-        onPressed: () {}, icon: const Icon(Icons.arrow_forward_rounded)));
+        onPressed: () {}, icon:  CircleAvatar(
+          backgroundColor: ThemeConfig.fourthAccent,
+          child: 
+         const Icon(Icons.arrow_forward_rounded, color: Colors.white,))));
     return Container(
         height: 170,
         width: double.infinity,
@@ -100,8 +104,8 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
 
   Widget _buildBook(AudioProvider event, AudioBook book, int index) {
     return InkWell(
-      onTap: () {
-        event.setAudioBook(book);
+      onTap: () async {
+        MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: book));
       },
       child: Stack(
         children: [
@@ -140,8 +144,8 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 5.0, vertical: 000.0),
             child: InkWell(
-              onTap: () {
-                event.setAudioBook(book);
+              onTap: () async {
+                MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: book));
               },
               child: SizedBox(
                 height: 180,

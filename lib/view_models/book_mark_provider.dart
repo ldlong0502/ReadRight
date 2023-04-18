@@ -35,7 +35,10 @@ class BookMarkProvider extends ChangeNotifier {
   }
 
   removeBook(Book book) async {
-    hiveBookMark.delete(book.id);
+    print(hiveBookMark.values.toList().length);
+    await hiveBookMark.delete(book.id);
+
+    print(hiveBookMark.values.toList().length);
     setListBookMark();
   }
 

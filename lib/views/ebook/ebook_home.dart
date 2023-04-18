@@ -92,8 +92,11 @@ class _EbookHomeState extends State<EbookHome> {
               ),
             ),
           ),
-          const SliverToBoxAdapter(
-            child: EbookComponent(),
+          
+           SliverToBoxAdapter(
+            child: Container(
+              color: Colors.white,
+              child: const EbookComponent()),
           )
         ],
       ),

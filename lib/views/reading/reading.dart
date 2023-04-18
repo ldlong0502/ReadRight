@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ebook/util/functions.dart';
-import 'package:ebook/view_models/book_reading_provider.dart';
+import 'package:ebook/view_models/book_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import '../../models/book.dart';
 import '../../theme/theme_config.dart';
 import '../../util/enum.dart';
-import '../details/details_book.dart';
+import '../ebook/details_ebook.dart';
 import '../mainScreen/main_screen.dart';
 
 class Reading extends StatefulWidget {
@@ -57,14 +57,14 @@ class _ReadingState extends State<Reading> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback(
       (_) {
-        Provider.of<BookReadingProvider>(context, listen: false).getInfo();
+        Provider.of<BookHistoryProvider>(context, listen: false).getInfo();
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BookReadingProvider>(
+    return Consumer<BookHistoryProvider>(
         builder: (context, event, _) => Scaffold(
             appBar: AppBar(
               title: const Padding(
@@ -119,7 +119,7 @@ class _ReadingState extends State<Reading> {
     );
   }
 
-  _buildBodyList(BookReadingProvider event) {
+  _buildBodyList(BookHistoryProvider event) {
     return ListView(
       shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
@@ -143,7 +143,7 @@ class _ReadingState extends State<Reading> {
     );
   }
 
-  _buildRecentlyBook(BookReadingProvider event) {
+  _buildRecentlyBook(BookHistoryProvider event) {
     var item = event.bookReadingList[0];
     return InkWell(
       onTap: () async {
@@ -250,7 +250,7 @@ class _ReadingState extends State<Reading> {
     );
   }
 
-  _buildMoreBook(BookReadingProvider event) {
+  _buildMoreBook(BookHistoryProvider event) {
     var list = [...event.bookReadingList];
     list.removeAt(0);
     return Column(
@@ -262,7 +262,7 @@ class _ReadingState extends State<Reading> {
                 context,
                 PageTransition(
                     type: PageTransitionType.rightToLeft,
-                    child: DetailsBook(
+                    child: DetailsEbook(
                       book: item,
                     )));
           },
@@ -396,7 +396,7 @@ class _ReadingState extends State<Reading> {
     );
   }
 
-  _buildPopUpMenu(BookReadingProvider event , Book item) {
+  _buildPopUpMenu(BookHistoryProvider event , Book item) {
     return PopupMenuButton<ActionBook>(
         onSelected: (ActionBook value) {
           setState(() {
@@ -405,7 +405,7 @@ class _ReadingState extends State<Reading> {
                   context,
                   PageTransition(
                       type: PageTransitionType.rightToLeft,
-                      child: DetailsBook(
+                      child: DetailsEbook(
                         book: item,
                       )));
             } else {

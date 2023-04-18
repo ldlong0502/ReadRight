@@ -1,7 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'package:ebook/models/media_data.dart';
-
 class AudioBook {
   final int id;
   final String title;
@@ -12,9 +10,8 @@ class AudioBook {
   final String publisher;
   final int listen;
   final List<String> genre;
-  final List<Map<String, dynamic>> listMp3;
+  final List<Map<dynamic, dynamic>> listMp3;
   final String description;
-  int addedDate = DateTime.now().millisecondsSinceEpoch;
   String? locator;
   AudioBook({
     required this.id,
@@ -28,7 +25,6 @@ class AudioBook {
     required this.genre,
     required this.listMp3,
     required this.description,
-
   });
 
   factory AudioBook.fromJson(Map<dynamic, dynamic> json) {
@@ -42,7 +38,8 @@ class AudioBook {
       publisher: json['publisher'] as String,
       listen: json['listen'] as int,
       genre: List<String>.from(json['genre'] as List),
-      listMp3: List<Map<String, dynamic>>.from(json['mp3']),
+      listMp3: List<Map<dynamic, dynamic>>.from(
+          json['mp3']),
       description: json['description'] as String,
     );
   }
@@ -56,9 +53,10 @@ class AudioBook {
       'createdAt': createdAt,
       'publisher': publisher,
       'listen': listen,
+      'mp3': listMp3,
       'genre': genre,
       'description': description,
-      'addedDate': addedDate,
     };
   }
 }
+

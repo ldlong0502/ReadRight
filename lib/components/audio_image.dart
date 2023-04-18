@@ -14,10 +14,10 @@ class AudioImage extends StatelessWidget {
     return Stack(
       children: [
         ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.circular(10),
           child: Image.network(
             audioBook.image,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
           ),
         ),
         Positioned.fill(

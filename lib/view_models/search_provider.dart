@@ -11,7 +11,12 @@ class SearchProvider with ChangeNotifier {
   BooksApi api = BooksApi();
   List<Book> _listBooks = <Book>[];
   List<AudioBook> _listAudioBooks = <AudioBook>[];
+  int _currentIndex = 0;
 
+  void setCurrentIndex(value) {
+    _currentIndex = value;
+    notifyListeners();
+  }
   void setListBooks(value) {
     _listBooks = value;
     notifyListeners();
@@ -29,7 +34,7 @@ class SearchProvider with ChangeNotifier {
   List<Book> get listBooks => _listBooks;
   List<AudioBook> get listAudioBooks => _listAudioBooks;
   String get query => _query;
-
+  int get currentIndex => _currentIndex;
   
 
   Future<void> searchBook(String querySearch) async {
@@ -42,13 +47,27 @@ class SearchProvider with ChangeNotifier {
       if(query == ""){
          urlBook = '${api.bookUrlKey}?_sort=view&_order=desc&_limit=2';
          urlAudioBook = '${api.audioBookUrlKey}?_sort=listen&_order=desc&_limit=2';
+         setListBooks(await api.getFilterBooks(urlBook));
+         setListAudioBooks(await api.getFilterAudioBooks(urlAudioBook));
       }
       else{
-        urlBook = '${api.bookUrlKey}?q=$query';
-        urlAudioBook = '${api.audioBookUrlKey}?q=$query';
+        var listBook  = (await api.getBooks())!
+            .where((e) =>
+                e.title.toLowerCase().contains(query.toLowerCase()) ||
+                e.author.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+        var listAudioBook = (await api.getAudioBook())!
+            .where((e) =>
+                e.title.toLowerCase().contains(query.toLowerCase()) ||
+                e.author.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+
+            
+        setListBooks(listBook);
+        setListAudioBooks(listAudioBook);
+
       }
-      setListBooks(await api.getFilterBooks(urlBook));
-      setListAudioBooks(await api.getFilterAudioBooks(urlAudioBook));
+
       setApiRequestStatus(APIRequestStatus.loaded);
     } catch (e) {
       checkError(e);

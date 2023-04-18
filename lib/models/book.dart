@@ -14,7 +14,6 @@ class Book {
   final String pages;
   final String description;
   final String epub;
-  int addedDate = DateTime.now().millisecondsSinceEpoch;
   String? locator;
   Book({
     required this.id,
@@ -61,7 +60,6 @@ class Book {
       'pages': pages,
       'description': description,
       'epub': epub,
-      'addedDate': addedDate,
     };
   }
 

@@ -1,8 +1,9 @@
+import 'package:ebook/models/fav_ebook.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/book.dart';
 
-class DetailsProvider extends ChangeNotifier {
+class DetailsEbookProvider extends ChangeNotifier {
   Book? book;
   bool _isBookMark = false;
   bool loading = false;
@@ -38,7 +39,8 @@ class DetailsProvider extends ChangeNotifier {
   }
 
   addBookMark() {
-    hiveBookMark.put(book!.id , book!.toJson());
+    var item = FavoriteEbook(book: book!, date: DateTime.now().millisecondsSinceEpoch);
+    hiveBookMark.put(book!.id , item.toJson());
     checkBookMark();
   }
 
