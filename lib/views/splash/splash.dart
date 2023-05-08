@@ -1,91 +1,57 @@
-import 'package:ebook/components/falling_image.dart';
+
+
+import 'package:ebook/util/const.dart';
+import 'package:ebook/util/route.dart';
+import 'package:ebook/view_models/app_provider.dart';
+import 'package:ebook/views/mainScreen/main_screen.dart';
+import 'package:ebook/views/welcome/welcome.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
-import '../../util/route.dart';
-import '../mainScreen/main_screen.dart';
-
-class Splash extends StatefulWidget {
-  const Splash({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<Splash> createState() => _SplashState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashState extends State<Splash> {
-  double _opacity = 0.0;
-   double _opacityButton = 0.0;
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _opacity = 1.0;
-        _opacityButton = 1.0;
-      });
+    Future.delayed(const Duration(seconds: 3)).then((value) {
+      if(context.read<AppProvider>().isWelcome) {
+        MyRouter.pushReplacementAnimation(context, const MainScreen());
+      }
+      else{
+        MyRouter.pushReplacementAnimation(context, const WelcomeScreen());
+      }
     });
   }
-
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            ColorFiltered(
-              colorFilter: const ColorFilter.mode(
-                  Colors.amberAccent, BlendMode.softLight),
-              child: Image.asset(
-                'assets/images/background.png',
-                fit: BoxFit.cover,
-                height: size.height,
-                width: size.width,
-              ),
-            ),
-            Center(
-              child: Stack(
-                children: [
-                  Container(
-                    width: 300,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(150)),
-                    height: 300,
-                  ),
-                  const FallingImage(
-                      imagePath: 'assets/icons/read.svg', top: 50, left: 20),
-                  Positioned(
-                    top: 100,
-                    left: 100,
-                    child: AnimatedOpacity(
-                        opacity: _opacity,
-                        duration: const Duration(seconds: 2),
-                        child: SvgPicture.asset(
-                          'assets/icons/people.svg',
-                          height: 120,
-                          width: 120,
-                        )),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    left: 130,
-                    child: AnimatedOpacity(
-                        opacity: _opacityButton,
-                        duration: const Duration(seconds: 3),
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_forward_outlined), 
-                          onPressed: (){
-                             MyRouter.pushPageReplacement(
-                                context,
-                               const  MainScreen(),
-                              );
-                          },))
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return  Container(
+      decoration: Constants.linearDecoration,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 50,
+                child: Image.asset('assets/images/logo.png' , fit: BoxFit.cover, height: 50,)),
+              const SizedBox(height: 30,),
+              const SpinKitSpinningLines(
+                color: Colors.orange,
+                size: 50,
+              )
+    
+            ],
+          ),
         ),
       ),
     );

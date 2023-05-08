@@ -6,8 +6,8 @@ import '../models/book.dart';
 class BooksApi {
   final dio = Dio();
   
-  String bookUrlKey = "http://10.0.2.2:3000/api/books";
-  String audioBookUrlKey = "http://10.0.2.2:3000/api/audio_books";
+  String bookUrlKey = "https://readright.onrender.com/api/books";
+  String audioBookUrlKey = "https://readright.onrender.com/api/audio_books";
 
   Future<List<Book>?> getBooks() async {
     Response result = await dio.get(bookUrlKey);

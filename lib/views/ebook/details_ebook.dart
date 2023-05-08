@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import '../../components/cache_image_ebook.dart';
 import '../../models/book.dart';
 import '../../theme/theme_config.dart';
 import '../../util/dialogs.dart';
@@ -179,7 +180,7 @@ class _DetailsEbookState extends State<DetailsEbook> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
-                    expandedHeight: size.height * 0.6,
+                    expandedHeight: size.height * 0.65,
                     iconTheme: const IconThemeData(color: Colors.white),
                     automaticallyImplyLeading: false,
                     backgroundColor: Colors.transparent,
@@ -233,108 +234,111 @@ class _DetailsEbookState extends State<DetailsEbook> {
                       collapseMode: CollapseMode.pin,
                       background: Container(
                         child: Column(
+                          
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: SizedBox(
-                                  height: size.height * 0.3,
-                                  child: Hero(
-                                      transitionOnUserGestures: true,
-                                      tag: widget.book.title,
-                                      child: Image.network(
-                                        widget.book.image,
-                                        fit: BoxFit.cover,
-                                      ))),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20, top: 20),
-                              child: Row(
-                                children: const [
-                                  Icon(
-                                    Icons.menu_book_rounded,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    'EBOOK',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20, top: 5),
-                              child: Row(
+                            Expanded(
+                                flex: 3,
+                               
+                                child: SizedBox(
+                                  width: 150,
+                                  child: CacheImageEbook(url: widget.book.image))),
+                            Expanded(
+                               flex: 3,
+
+                              child: Column(
+                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    widget.book.title,
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20, top: 10),
+                                    child: Row(
+                                      children: const [
+                                        Icon(
+                                          Icons.menu_book_rounded,
+                                          color: Colors.white,
+                                          size: 15,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          'EBOOK',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20, top: 5),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        widget.book.title,
+                                        maxLines: 2,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 25,
+                                            overflow: TextOverflow.ellipsis,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20, top: 5),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Tác giả: ${widget.book.author}',
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20, top: 5),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Thể loại: $genre',
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20, top: 5),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.remove_red_eye_sharp,
+                                          color: Colors.white,
+                                          size: 15,
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          widget.book.view.toString(),
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20, top: 5),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Tác giả: ${widget.book.author}',
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20, top: 5),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Thể loại: $genre',
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20, top: 5),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.remove_red_eye_sharp,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    widget.book.view.toString(),
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            Expanded(child: Container())
                           ],
                         ),
                       ),
@@ -342,7 +346,6 @@ class _DetailsEbookState extends State<DetailsEbook> {
                   ),
                   SliverToBoxAdapter(
                     child: Container(
-                      height: size.height,
                       margin: const EdgeInsets.only(top: 20),
                       child: Container(
                         padding: const EdgeInsets.all(20),
@@ -356,17 +359,17 @@ class _DetailsEbookState extends State<DetailsEbook> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Giới thiệu nội dung',
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.blueAccent),
+                                  color: ThemeConfig.lightAccent),
                             ),
                             const SizedBox(height: 10),
                             Text(
                               widget.book.description,
-                              style: const TextStyle(fontSize: 15),
+                              style: const TextStyle(fontSize: 15 ),
                             ),
                           ],
                         ),

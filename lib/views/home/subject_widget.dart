@@ -1,6 +1,7 @@
 
 
 
+import 'package:ebook/components/cache_image_ebook.dart';
 import 'package:ebook/util/enum.dart';
 import 'package:ebook/views/ebook/details_ebook.dart';
 import 'package:flutter/material.dart';
@@ -90,15 +91,10 @@ class _SubjectWidgetState extends State<SubjectWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                         item.image,
-                         fit: BoxFit.fill,
-                         width: 200,
-                         height: 230,
-                        ),
-                      ),
+                      SizedBox(
+                        width: 200,
+                        height: 230,
+                        child: CacheImageEbook(url: item.image)),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
@@ -170,12 +166,9 @@ class _SubjectWidgetState extends State<SubjectWidget> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          item.image,
-                          fit: BoxFit.fill,
-                          width: 70,
-                          
-                        ),
+                        child:  SizedBox(
+                            width: 70,
+                            child: CacheImageEbook(url: item.image)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0),

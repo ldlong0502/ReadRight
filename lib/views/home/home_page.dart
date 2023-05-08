@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:ebook/components/audio_image.dart';
+import 'package:ebook/components/cache_image_ebook.dart';
 import 'package:ebook/models/book_download.dart';
 import 'package:ebook/models/recent_audio_book.dart';
 import 'package:ebook/util/const.dart';
 import 'package:ebook/util/route.dart';
+import 'package:ebook/view_models/audio_provider.dart';
 import 'package:ebook/view_models/book_history_provider.dart';
 import 'package:ebook/view_models/history_provider.dart';
 import 'package:ebook/views/ebook/ebook_home.dart';
@@ -14,10 +16,12 @@ import 'package:ebook/views/home/recently_widget.dart';
 import 'package:ebook/views/search_page/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/custom_search.dart';
+import '../../util/dialogs.dart';
 import '../audio_books/audio_home.dart';
 import 'home.dart';
 
@@ -68,11 +72,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    var list = context.read<HistoryProvider>().allBooks;
     return Scaffold(
       body: ListView(
         children: [
           Container(
-            height: size.height * 0.6,
+            height: list.isEmpty? size.height * 0.4 : size.height * 0.6,
             decoration: Constants.linearDecoration.copyWith(
               borderRadius: const BorderRadius.only(
                 bottomRight: Radius.circular(30)
@@ -86,7 +91,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 _buildSearch(context),
                 _buildGreeting(),
                 _buildStyle(),
-                _buildText(),
+                list.isEmpty ? Container() : _buildText(),
                 _buildHistory(),
                 
               ],
@@ -182,7 +187,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       title: Text(
         map['greeting'] as String,
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -206,7 +212,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           children: [
                             CircleAvatar(
                               radius: 30,
-                              backgroundColor: Colors.white,
+                              backgroundColor: Colors.grey[350]!.withOpacity(0.2),
                               child: Image.asset(
                                 e['asset'] as String,
                                 height: 40,
@@ -229,7 +235,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   _buildHistory() {
     return Consumer<HistoryProvider>(
       builder: (context, event, _) {
-        return event.allBooks.isEmpty ? Container() : buildBooksHistory(event);
+        return event.allBooks.isEmpty ? Container(
+          
+        ) : buildBooksHistory(event);
       },
     );
   }
@@ -247,7 +255,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             backgroundColor: Colors.white,
             child: Icon(Icons.arrow_forward_rounded))));
     return Container(
-        height: 120,
+        height: MediaQuery.of(context).size.height * 0.15,
         width: double.infinity,
         margin: const EdgeInsets.only(top: 10),
         child: ListView(
@@ -259,92 +267,97 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildTypeBook(HistoryProvider event, book, int index) {
     if (book is RecentAudioBook) {
       var item = book;
-      return Container(
-          margin: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              color: Colors.white30, borderRadius: BorderRadius.circular(20)),
-          width: 200,
-          child: Row(
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: AudioImage(audioBook: item.audioBook, size: 20),
-                  )),
-              Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'SÁCH NÓI',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          item.audioBook.title,
-                          maxLines: 2,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              overflow: TextOverflow.ellipsis,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ))
-            ],
-          ));
+      return InkWell(
+        onTap: (){
+          context.read<AudioProvider>().createPlayer(item.audioBook, AudioPlayer(), context);
+        },
+        child: Container(
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                color: Colors.white30, borderRadius: BorderRadius.circular(20)),
+            width: 200,
+            child: Row(
+              children: [
+                Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0 , top :10 , bottom: 10),
+                      child: AudioImage(audioBook: item.audioBook, size: 20),
+                    )),
+                Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'SÁCH NÓI',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            item.audioBook.title,
+                            maxLines: 2,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ))
+              ],
+            )),
+      );
     } else {
       var item = book as BookDownLoad;
-      return Container(
-          margin: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              color: Colors.white30, borderRadius: BorderRadius.circular(20)),
-          width: 200,
-          child: Row(
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        item.item.image,
-                        fit: BoxFit.cover,
+      return InkWell(
+        onTap: (){
+          Dialogs().showEpub(context, item.item);
+        },
+        child: Container(
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                color: Colors.white30, borderRadius: BorderRadius.circular(20)),
+            width: 200,
+            child: Row(
+              children: [
+                Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, top: 10, bottom: 10),
+                      child: CacheImageEbook(url: item.item.image),
+                    )),
+                Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'EBOOK',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            item.item.title,
+                            maxLines: 2,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        ],
                       ),
-                    ),
-                  )),
-              Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'EBOOK',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          item.item.title,
-                          maxLines: 2,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              overflow: TextOverflow.ellipsis,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ))
-            ],
-          ));
+                    ))
+              ],
+            )),
+      );
     }
   }
 
@@ -354,7 +367,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Padding(
         padding: EdgeInsets.only(left: 20),
         child: Text(
-          'Đã đọc/nghe gần đây',
+          'Đã đọc / nghe gần đây',
           maxLines: 2,
           style: TextStyle(
               color: Colors.white,

@@ -86,7 +86,7 @@ class _ChapterDialogState extends State<ChapterDialog> {
         children: widget.listMp3.asMap().entries.map((entry) {
           int idx = entry.key;
           var val = entry.value;
-          var list = val['title'].toString().split(': ');
+          
           return InkWell(
             onTap: () async {
               if( idx == index) return;
@@ -123,12 +123,13 @@ class _ChapterDialogState extends State<ChapterDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(list[0], style: TextStyle(
+                        Text('Phần ${idx +1}' , style: TextStyle(
                                 color: ThemeConfig.lightAccent,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold),
                           ),
-                        Text(list[1], style: const TextStyle(
+                        Text(
+                            val['title'], style: const TextStyle(
                           overflow: TextOverflow.ellipsis
                         ),)
                       ],

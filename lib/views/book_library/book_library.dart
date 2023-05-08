@@ -35,7 +35,7 @@ class _BookLibraryState extends State<BookLibrary> {
     return Consumer<LibraryProvider>(
       builder: (context, event ,_) {
         return Container(
-          decoration: Constants.linearDecoration,
+          decoration: Constants.linear1Decoration,
           child: Scaffold(
               backgroundColor: Colors.transparent,
               resizeToAvoidBottomInset: false,

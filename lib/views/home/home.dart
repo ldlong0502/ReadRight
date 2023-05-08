@@ -8,6 +8,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../components/audio_image.dart';
+import '../../components/cache_image_ebook.dart';
 import '../../components/two_side_rounded_button.dart';
 import '../../models/audio_book.dart';
 import '../../models/book.dart';
@@ -29,8 +30,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) => Provider.of<HomeProvider>(context, listen: false).getBooks(),
+     SchedulerBinding.instance.addPostFrameCallback(
+      (_) => Provider.of<AudioProvider>(context, listen: false).getBooks(),
     );
   }
 
@@ -49,25 +50,32 @@ class _HomeState extends State<Home> {
   _buildBodyList(HomeProvider homeProvider, Size size) {
     return RefreshIndicator(
       onRefresh: () => homeProvider.getBooks(),
-      child: ListView(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        children: <Widget>[
-          const SizedBox(height: 10.0),
-           const SizedBox(height: 10.0),
-          _buildSectionTitle('Top 5 trending'),
-          _buildSlider(homeProvider, size),
-          const SizedBox(height: 20.0),
-          _buildSectionTitle('Những cuốn sách hay bạn nên nghe'),
-          const SizedBox(height: 10.0),
-          _buildAudioBookSlider(),
-          const SizedBox(height: 20.0),
-          _buildSectionTitle('Những cuốn sách hay bạn nên đọc'),
-          const SizedBox(height: 10.0),
-          _buildEbookSlider(homeProvider),
-          // SizedBox(height: 20.0),
-          // _buildRecentBooks('Recently Added'),
-        ],
+      child: Consumer<AudioProvider>(
+        builder: (context, event, _) {
+          return ListView(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            children: <Widget>[
+              const SizedBox(height: 10.0),
+              _buildSectionTitle('Top thịnh hành '),
+              _buildBodyGrid(homeProvider, size),
+              const SizedBox(height: 20.0),
+              _buildSectionTitle('Những cuốn sách hay bạn nên nghe'),
+              const SizedBox(height: 10.0),
+              _buildAudioBookSlider(event),
+              const SizedBox(height: 20.0),
+              _buildSectionTitle('Những cuốn sách hay bạn nên đọc'),
+              const SizedBox(height: 10.0),
+              _buildEbookSlider(homeProvider),
+               const SizedBox(height: 20.0),
+              _buildSectionTitle('Dựa trên sở thích của bạn'),
+               const SizedBox(height: 10.0),
+              _buildEbookSlider(homeProvider),
+              // SizedBox(height: 20.0),
+              // _buildRecentBooks('Recently Added'),
+            ],
+          );
+        }
       ),
     );
   }
@@ -80,32 +88,31 @@ class _HomeState extends State<Home> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
-            child: AudioImage(
-              audioBook: book,
-              size: 50,
+            child: SizedBox(
+              width: 120,
+              child: AudioImage(
+                audioBook: book,
+                size: 50,
+              ),
             ),
           ),
-          Positioned(
-              bottom: 0,
-              left: 30,
-              child: Text(
-                (index + 1).toString(),
-                style: TextStyle(
-                    color: ThemeConfig.fourthAccent,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold),
-              ))
+         
         ],
       ),
     );
   }
-  _buildAudioBookSlider() {
-    final list = context.read<AudioProvider>().top5;
+  _buildAudioBookSlider(AudioProvider event) {
+    final list = event.top5;
     final listWidget = List.generate(
       list.length,
       (index) => _buildAudioBook(list[index], index),
     )..add(IconButton(
-        onPressed: () {}, icon: const Icon(Icons.arrow_forward_rounded)));
+        onPressed: () {
+         
+        },
+        icon: const CircleAvatar(
+            backgroundColor: Colors.amber,
+            child: Icon(Icons.arrow_forward_rounded , color: Colors.white,))));
     return Container(
         height: 170,
         width: double.infinity,
@@ -132,16 +139,7 @@ class _HomeState extends State<Home> {
                   width: 120,
                 )),
           ),
-          Positioned(
-              bottom: 10,
-              left: 30,
-              child: Text(
-                (index + 1).toString(),
-                style: TextStyle(
-                    color: ThemeConfig.fourthAccent,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold),
-              ))
+         
         ],
       ),
     );
@@ -152,7 +150,13 @@ class _HomeState extends State<Home> {
       list.length,
       (index) => _buildEbook(list[index], index),
     )..add(IconButton(
-        onPressed: () {}, icon: const Icon(Icons.arrow_forward_rounded)));
+        onPressed: () {},
+        icon: const CircleAvatar(
+            backgroundColor: Colors.amber,
+            child: Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+            ))));
     return Container(
         height: 170,
         width: double.infinity,
@@ -161,6 +165,67 @@ class _HomeState extends State<Home> {
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             children: listWidget));
+  }
+  _buildBodyGrid(HomeProvider event, size) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: GridView.builder(
+        shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          itemCount: event.autoSubject.books.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+            mainAxisExtent: 200,
+          ),
+          itemBuilder: (context, index) {
+          
+            var item =  event.autoSubject.books[index];
+            return InkWell(
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: DetailsEbook(
+                          book: item,
+                        )));
+              },
+              child: Container(
+                margin: const EdgeInsets.all(0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                        width: 120,
+                        height: 140,
+                        child: CacheImageEbook(url: item.image)),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        item.title,
+                        maxLines: 1,
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                    ),
+                    Text(
+                      item.author,
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: ThemeConfig.lightAccent,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+    );
   }
   _buildSlider(HomeProvider homeProvider, Size size) {
     final list = homeProvider.autoSubject.books;

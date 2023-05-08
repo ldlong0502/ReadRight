@@ -12,6 +12,17 @@ class AppProvider extends ChangeNotifier {
 
   int _pageIndex = 0;
   int get pageIndex => _pageIndex;
+
+  bool _isWelcome = false;
+
+  bool get isWelcome => _isWelcome;
+
+  setWelcome(value , c) async{
+    _isWelcome = value;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('welcome', c);
+    notifyListeners();
+  }
   void setPageIndex(value) {
     _pageIndex = value;
     notifyListeners();
@@ -53,5 +64,15 @@ class AppProvider extends ChangeNotifier {
     setTheme(ThemeConfig.lightTheme, 'light');
 
     return t;
+  }
+   Future<void> checkWelcome() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String r = prefs.getString('welcome') ?? 'false';
+    if(r == 'true') {
+      setWelcome(true, 'true');
+    }
+     else {
+      setWelcome(false, 'false');
+     } 
   }
 }

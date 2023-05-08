@@ -6,10 +6,10 @@ import 'package:ebook/view_models/audio_provider.dart';
 import 'package:ebook/views/audio_books/detail_audio_book.dart';
 import 'package:ebook/views/ebook/ebook_subject.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/audio_image.dart';
+import '../home/top5_widget.dart';
 
 class AudioBookComponent extends StatefulWidget {
   const AudioBookComponent({super.key});
@@ -21,9 +21,6 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) => Provider.of<AudioProvider>(context, listen: false).getBooks(),
-    );
   }
 
   @override
@@ -69,10 +66,19 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
       list.length,
       (index) => _buildBook(event, list[index], index),
     )..add(IconButton(
-        onPressed: () {}, icon:  CircleAvatar(
-          backgroundColor: ThemeConfig.fourthAccent,
-          child: 
-         const Icon(Icons.arrow_forward_rounded, color: Colors.white,))));
+        onPressed: () {
+          MyRouter.pushAnimation(
+              context,
+              Top5Widget(
+                list: event.top5,
+              ));
+        },
+        icon: CircleAvatar(
+            backgroundColor: ThemeConfig.fourthAccent,
+            child: const Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+            ))));
     return Container(
         height: 170,
         width: double.infinity,
@@ -109,22 +115,27 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
       },
       child: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
+          Container(
+            margin: const EdgeInsets.only(left: 20.0),
+            width: 120,
             child: AudioImage(
               audioBook: book,
               size: 50,
             ),
           ),
           Positioned(
-              bottom: 0,
+              bottom: 10,
               left: 30,
-              child: Text(
-                (index + 1).toString(),
-                style: TextStyle(
-                    color: ThemeConfig.fourthAccent,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold),
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: ThemeConfig.fourthAccent,
+                child: Text(
+                  (index + 1).toString(),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
               ))
         ],
       ),
@@ -145,7 +156,8 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
                 const EdgeInsets.symmetric(horizontal: 5.0, vertical: 000.0),
             child: InkWell(
               onTap: () async {
-                MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: book));
+                MyRouter.pushAnimation(
+                    context, DetailsAudioBook(audioBook: book));
               },
               child: SizedBox(
                 height: 180,
@@ -154,9 +166,13 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
                   children: [
                     Expanded(
                         flex: 1,
-                        child: AudioImage(
-                          audioBook: book,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          width: 120,
+                          child: AudioImage(
+                            audioBook: book,
                             size: 50,
+                          ),
                         )),
                     Expanded(
                         flex: 2,
@@ -213,56 +229,92 @@ class _AudioBookComponentState extends State<AudioBookComponent> {
     );
   }
 
+ 
+
   _buildGenre(AudioProvider event, Size size) {
     var listGenre = [
       {'name': 'Lịch sử', 'asset': 'assets/images/history.png'},
-      {'name': 'Tiên hiệp - Huyền huyễn', 'asset': 'assets/images/fairy.png'},
-      {'name': 'Văn học', 'asset': 'assets/images/literature.png'},
+      {'name': 'Tiên hiệp & Huyền huyễn', 'asset': 'assets/images/fairy.png'},
+      {
+        'name': 'Sách truyền cảm hứng',
+        'asset': 'assets/images/inspiration.png'
+      },
       {'name': 'Truyện', 'asset': 'assets/images/story.png'},
       {'name': 'Tài chính', 'asset': 'assets/images/financial.png'}
     ];
+    var listGenre1 = [
+      {'name': 'Khoa học viễn tưởng', 'asset': 'assets/images/science.png'},
+      {'name': 'Văn học', 'asset': 'assets/images/literature.png'},
+      {'name': 'Dạy làm giàu', 'asset': 'assets/images/rich.png'},
+      {'name': 'Nấu ăn', 'asset': 'assets/images/cook.png'},
+      {'name': 'Ôn thi THPT', 'asset': 'assets/images/school.png'}
+    ];
     return SizedBox(
-        height: listGenre.length / 5 * 30,
-      
-        child: ListView.builder(
+        height: size.height * 0.12,
+        
+        width: double.infinity,
+        child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          itemCount: listGenre.length,
           physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+             children: [
+               _buildRowGenre(listGenre , size),
+               const SizedBox(height: 10,),
+              _buildRowGenre(listGenre1 , size),
+             ],
+              ),
+        ));
+  }
+ _buildRowGenre(value, size) {
+   
+    return SizedBox(
+      height: size.height * 0.05,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: value.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              MyRouter.pushAnimation(context, EbookSubject(genre: listGenre[index]));
-            },
-            child: Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.only(
-                left: 20.0,
+            return _buildItemGenre(value[index]);
+          }),
+    );
+  }
+
+  _buildItemGenre(value) {
+    return InkWell(
+      onTap: (){
+        MyRouter.pushAnimation(context, EbookSubject(genre: value));
+      },
+      child: Container(
+        alignment: Alignment.center,
+        margin: const EdgeInsets.only(
+          left: 20.0,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Image.asset(
+                value['asset']!,
+                
               ),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(10),
+              const SizedBox(
+                width: 5,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      listGenre[index]['asset']!,
-                      height: 15,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      listGenre[index]['name']!,
-                      style: TextStyle(
-                          fontSize: 12, color: ThemeConfig.lightAccent),
-                    ),
-                  ],
-                ),
+              Text(
+                value['name']!,
+                style: TextStyle(fontSize: 14, color: ThemeConfig.lightAccent),
               ),
-            ),
-          );
-        }));
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -6,9 +6,10 @@ import 'package:ebook/util/route.dart';
 import 'package:ebook/views/ebook/details_ebook.dart';
 import 'package:ebook/views/ebook/ebook_subject.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import '../../components/cache_image_ebook.dart';
 import '../../view_models/home_provider.dart';
+import '../home/top5_widget.dart';
 
 class EbookComponent extends StatefulWidget {
   const EbookComponent({super.key});
@@ -21,9 +22,7 @@ class _EbookComponentState extends State<EbookComponent> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) => Provider.of<HomeProvider>(context, listen: false).getBooks(),
-    );
+
   }
 
   @override
@@ -67,7 +66,13 @@ class _EbookComponentState extends State<EbookComponent> {
     final list = homeProvider.autoSubject.books;
      final listWidget = List.generate(
         list.length, (index) => _buildBook(list[index] , index),)
-      ..add(IconButton(onPressed: () {}, icon: CircleAvatar(
+      ..add(IconButton(onPressed: () {
+          MyRouter.pushAnimation(
+              context,
+              Top5Widget(
+                list: homeProvider.autoSubject.books,
+              ));
+      }, icon: CircleAvatar(
             backgroundColor: ThemeConfig.fourthAccent,
             child: const Icon(
               Icons.arrow_forward_rounded,
@@ -113,24 +118,23 @@ class _EbookComponentState extends State<EbookComponent> {
       },
       child: Stack(
         children: [
-          Hero(
-            transitionOnUserGestures: true,
-            tag: book.image,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(book.image , fit: BoxFit.cover, width: 120,)),
-            ),
+          Container(
+            margin: const EdgeInsets.only( left: 20.0),
+            width: 120,
+            child: CacheImageEbook(url: book.image),
           ),
            Positioned(
             bottom: 10,
             left: 30,
-            child: Text((index + 1).toString(), style:  TextStyle(
-              color: ThemeConfig.fourthAccent,
-              fontSize: 50,
-              fontWeight: FontWeight.bold
-            ),) )
+            child: CircleAvatar(
+              radius: 20,
+               backgroundColor: ThemeConfig.fourthAccent,
+              child: Text((index + 1).toString(), style:  const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+              ),),
+            ) )
         
         ],
       ),
@@ -153,73 +157,65 @@ class _EbookComponentState extends State<EbookComponent> {
               onTap: () {
                  MyRouter.pushAnimation(context, DetailsEbook(book: book));
               },
-              child: Hero(
-                 tag: book.title,
-                transitionOnUserGestures: true,
-                child: SizedBox(
-                  height: 180,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                          flex: 1,
-                          child: ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            child: Image.network(
-                              book.image,
-                              fit: BoxFit.cover,
+              child: SizedBox(
+                height: 180,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: CacheImageEbook(
+                          url: book.image,
+
+                        )),
+                    Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 180,
+                              child: Text(
+                                book.title,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
                             ),
-                          )),
-                      Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 180,
-                                child: Text(
-                                  book.title,
-                                  maxLines: 2,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            SizedBox(
+                              width: 180,
+                              child: Text(
+                                book.author,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: ThemeConfig.lightAccent,
+                                    fontWeight: FontWeight.bold,
+                                    overflow: TextOverflow.ellipsis),
                               ),
-                              const SizedBox(
-                                height: 5,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            SizedBox(
+                              width: 180,
+                              child: Text(
+                                book.description,
+                                maxLines: 3,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: ThemeConfig.authorColor,
+                                    overflow: TextOverflow.ellipsis),
                               ),
-                              SizedBox(
-                                width: 180,
-                                child: Text(
-                                  book.author,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: ThemeConfig.lightAccent,
-                                      fontWeight: FontWeight.bold,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              SizedBox(
-                                width: 180,
-                                child: Text(
-                                  book.description,
-                                  maxLines: 3,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: ThemeConfig.authorColor,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ),
-                            ],
-                          ))
-                    ],
-                  ),
+                            ),
+                          ],
+                        ))
+                  ],
                 ),
               ),
             ));
@@ -227,57 +223,92 @@ class _EbookComponentState extends State<EbookComponent> {
     );
   }
 
-  _buildGenre(HomeProvider homeProvider, Size size) {
+  _buildGenre(HomeProvider event, Size size) {
     var listGenre = [
       {'name': 'Lịch sử', 'asset': 'assets/images/history.png'},
-      {'name': 'Tiên hiệp - Huyền huyễn', 'asset': 'assets/images/fairy.png'},
-      {'name': 'Văn học', 'asset': 'assets/images/literature.png'},
+      {'name': 'Tiên hiệp & Huyền huyễn', 'asset': 'assets/images/fairy.png'},
+      {
+        'name': 'Sách truyền cảm hứng',
+        'asset': 'assets/images/inspiration.png'
+      },
       {'name': 'Truyện', 'asset': 'assets/images/story.png'},
       {'name': 'Tài chính', 'asset': 'assets/images/financial.png'}
     ];
+    var listGenre1 = [
+      {'name': 'Khoa học viễn tưởng', 'asset': 'assets/images/science.png'},
+     
+       {'name': 'Văn học', 'asset': 'assets/images/literature.png'},
+      {'name': 'Dạy làm giàu', 'asset': 'assets/images/rich.png'},
+      {'name': 'Nấu ăn', 'asset': 'assets/images/cook.png'},
+      {'name': 'Ôn thi THPT', 'asset': 'assets/images/school.png'}
+    ];
     return SizedBox(
-        height: listGenre.length / 5 * 30,
-        child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: listGenre.length,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  MyRouter.pushAnimation(
-                      context, EbookSubject(genre: listGenre[index]));
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(
-                    left: 20.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          listGenre[index]['asset']!,
-                          height: 15,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          listGenre[index]['name']!,
-                          style: TextStyle(
-                              fontSize: 12, color: ThemeConfig.lightAccent),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }));
+        height: size.height * 0.12,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              _buildRowGenre(listGenre, size),
+              const SizedBox(
+                height: 10,
+              ),
+              _buildRowGenre(listGenre1, size),
+            ],
+          ),
+        ));
+  }
+
+  _buildRowGenre(value, size) {
+    return SizedBox(
+      height: size.height * 0.05,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: value.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return _buildItemGenre(value[index]);
+          }),
+    );
+  }
+
+  _buildItemGenre(value) {
+    return InkWell(
+      onTap: () {
+        MyRouter.pushAnimation(context, EbookSubject(genre: value));
+      },
+      child: Container(
+        alignment: Alignment.center,
+        margin: const EdgeInsets.only(
+          left: 20.0,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Image.asset(
+                value['asset']!,
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(
+                value['name']!,
+                style: TextStyle(fontSize: 14, color: ThemeConfig.lightAccent),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   

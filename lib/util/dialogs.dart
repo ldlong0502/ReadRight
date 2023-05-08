@@ -43,10 +43,10 @@ class Dialogs {
               ),
               const SizedBox(height: 25.0),
               const Text(
-                'Are you sure you want to quit?',
+                'Bạn muốn thoát?',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: 14.0,
+                  fontSize: 18.0,
                 ),
               ),
               const SizedBox(height: 40.0),
@@ -202,6 +202,7 @@ class Dialogs {
         'onTap': () {
           Navigator.of(appContext).pop();
           context.read<LibraryProvider>().removeBookDownload(book);
+          showSnackBar(context, 'Đã xóa khỏi danh sách');
         }
       }
     ];
@@ -210,7 +211,7 @@ class Dialogs {
         context: appContext,
         builder: (appContext) {
           return Container(
-            height: MediaQuery.of(appContext).size.height * 0.4,
+            height: MediaQuery.of(appContext).size.height * 0.45 + 20,
             decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.white,
@@ -304,6 +305,7 @@ class Dialogs {
          else if (item is AudioBook){
           context.read<LibraryProvider>().removeAudioBookFavorites(item);
          }
+         showSnackBar(context, 'Đã xóa khỏi danh sách');
         }
       }
     ];
@@ -312,7 +314,7 @@ class Dialogs {
         context: appContext,
         builder: (appContext) {
           return Container(
-            height: MediaQuery.of(appContext).size.height * 0.4,
+            height: MediaQuery.of(appContext).size.height * 0.45 + 20,
             decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.white,
@@ -399,7 +401,7 @@ class Dialogs {
         context: appContext,
         builder: (appContext) {
           return Container(
-            height: MediaQuery.of(appContext).size.height * 0.35,
+            height: MediaQuery.of(appContext).size.height * 0.35 + 20,
             decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.white,
@@ -567,5 +569,36 @@ class Dialogs {
         builder: (context) => DownloadAlert(
               book: book,
             ));
+  }
+
+
+  showSnackBar( BuildContext context ,String title){ 
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 2),
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.check_circle_outlined,
+            color: Colors.green,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            title,
+            style: TextStyle(color: ThemeConfig.lightAccent),
+          ),
+        ],
+      ),
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.only(bottom: 20, left: 20, right: 15),
+      padding: const EdgeInsets.all(15),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+    ));
   }
 }

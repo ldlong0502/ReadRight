@@ -1,5 +1,6 @@
 import 'package:ebook/components/audio_image.dart';
 import 'package:ebook/components/build_body.dart';
+import 'package:ebook/components/cache_image_ebook.dart';
 import 'package:ebook/util/route.dart';
 import 'package:ebook/view_models/search_provider.dart';
 import 'package:ebook/views/audio_books/detail_audio_book.dart';
@@ -227,7 +228,9 @@ class _SearchResultState extends State<SearchResult> {
               MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: item));
             },
         child: ListTile(
-          leading: AudioImage(audioBook: item , size: 25, ),
+          leading: SizedBox(
+            width: 60,
+            child: AudioImage(audioBook: item , size: 25, )),
           title: Text(item.title , style: const TextStyle(
             fontWeight: FontWeight.bold
           ),),
@@ -249,9 +252,11 @@ class _SearchResultState extends State<SearchResult> {
               MyRouter.pushAnimation(context, DetailsEbook(book: item));
             },
             child: ListTile(
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(item.image,fit: BoxFit.fill,width: 60,)),
+              leading: SizedBox(
+                  width: 60,
+                  child: CacheImageEbook(
+                    url: item.image,
+                  )),
               title: Text(
                 item.title,
                 style: const TextStyle(fontWeight: FontWeight.bold),

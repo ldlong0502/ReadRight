@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../../components/audio_image.dart';
 import '../../theme/theme_config.dart';
 import '../../util/dialogs.dart';
-import '../../view_models/app_provider.dart';
 
 class RecentlyWidget extends StatefulWidget {
   const RecentlyWidget({super.key});
@@ -119,8 +118,8 @@ _buildTitle(String title) {
           Expanded(
             flex: 1,
             child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: AudioImage(audioBook: item.audioBook, size: 60)),
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: AudioImage(audioBook: item.audioBook, size: 40)),
           ),
           Expanded(
               flex: 3,
@@ -172,7 +171,7 @@ _buildTitle(String title) {
           Expanded(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.network(

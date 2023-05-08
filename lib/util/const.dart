@@ -20,6 +20,18 @@ class Constants {
       ],
     ),
   );
+
+   static BoxDecoration linear1Decoration = BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      colors: [
+        ThemeConfig.lightAccent,
+        ThemeConfig.fourthAccent,
+        
+      ],
+    ),
+  );
   static formatBytes(bytes, decimals) {
     if (bytes == 0) return 0.0;
     var k = 1024,

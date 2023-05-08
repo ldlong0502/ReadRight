@@ -76,7 +76,10 @@ class _EbookHomeState extends State<EbookHome> {
                     const SizedBox(
                       height: 50,
                     ),
-                    Image.asset('assets/images/ebook.png'),
+                    CircleAvatar(
+                       radius: 40,
+                        backgroundColor: Colors.grey[350]!.withOpacity(0.2),
+                      child: Image.asset('assets/images/ebook.png' , height: 50,)),
                     const SizedBox(
                       height: 10,
                     ),

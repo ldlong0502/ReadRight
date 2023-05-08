@@ -52,15 +52,21 @@ class _EbookSubjectState extends State<EbookSubject> {
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset(widget.genre['asset'] , height: 20,),
+                            Center(child: Image.asset(widget.genre['asset'] , height: 20,)),
                             const SizedBox(width: 10,),
-                            Text(
-                              widget.genre['name'],
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
+                            Flexible(
+                              child: Text(
+                                widget.genre['name'],
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    
+                                    fontSize: 20,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ],
                         ),

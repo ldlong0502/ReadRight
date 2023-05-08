@@ -1,5 +1,6 @@
 
 
+import 'package:ebook/components/cache_image_ebook.dart';
 import 'package:ebook/models/audio_book.dart';
 import 'package:flutter/material.dart';
 
@@ -13,13 +14,7 @@ class AudioImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.network(
-            audioBook.image,
-            fit: BoxFit.cover,
-          ),
-        ),
+        CacheImageEbook(url: audioBook.image,),
         Positioned.fill(
             child: Align(
           alignment: Alignment.center,

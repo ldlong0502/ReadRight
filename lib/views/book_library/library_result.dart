@@ -1,4 +1,5 @@
 import 'package:ebook/components/audio_image.dart';
+import 'package:ebook/components/cache_image_ebook.dart';
 import 'package:ebook/models/book_download.dart';
 import 'package:ebook/models/fav_audioBook.dart';
 import 'package:ebook/models/fav_ebook.dart';
@@ -191,13 +192,8 @@ class _LibraryResultState extends State<LibraryResult> {
           Expanded(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    item.item.image,
-                    fit: BoxFit.fill,
-                  )),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: CacheImageEbook(url: item.item.image),
             ),
           ),
           Expanded(
@@ -249,8 +245,8 @@ class _LibraryResultState extends State<LibraryResult> {
           Expanded(
             flex: 1,
             child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: AudioImage(audioBook: item.audioBook, size: 60)),
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: AudioImage(audioBook: item.audioBook, size: 40)),
           ),
           Expanded(
               flex: 3,
@@ -301,13 +297,8 @@ class _LibraryResultState extends State<LibraryResult> {
           Expanded(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    item.book.image,
-                    fit: BoxFit.fill,
-                  )),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: CacheImageEbook(url: item.book.image),
             ),
           ),
           Expanded(
@@ -379,13 +370,8 @@ class _LibraryResultState extends State<LibraryResult> {
                   MyRouter.pushAnimation(context, DetailsEbook(book: item.item));
                 },
                 child: ListTile(
-                  leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        item.item.image,
-                        fit: BoxFit.fill,
-                        width: 60,
-                      )),
+                  leading: SizedBox(
+                      width: 60, child: CacheImageEbook(url: item.item.image)),
                   title: Text(
                     item.item.title,
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -433,9 +419,12 @@ class _LibraryResultState extends State<LibraryResult> {
                     MyRouter.pushAnimation(context, DetailsAudioBook(audioBook: item.audioBook));
                   },
                    child: ListTile(
-                    leading: AudioImage(
-                      audioBook: item.audioBook,
-                      size: 25,
+                    leading: SizedBox(
+                      width: 60,
+                      child: AudioImage(
+                        audioBook: item.audioBook,
+                        size: 25,
+                      ),
                     ),
                     title: Text(
                       item.audioBook.title,
@@ -452,13 +441,9 @@ class _LibraryResultState extends State<LibraryResult> {
                     MyRouter.pushAnimation(context, DetailsEbook(book: item.book));
                   },
                   child: ListTile(
-                    leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          item.book.image,
-                          fit: BoxFit.fill,
-                          width: 60,
-                        )),
+                    leading: SizedBox(
+                      width: 60,
+                      child: CacheImageEbook(url: item.book.image)),
                     title: Text(
                       item.book.title,
                       style: const TextStyle(fontWeight: FontWeight.bold),

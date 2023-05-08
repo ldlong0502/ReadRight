@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ebook/view_models/appbar_provider.dart';
 import 'package:ebook/view_models/audio_provider.dart';
 import 'package:ebook/view_models/details_audioBook_provider.dart';
@@ -8,7 +10,7 @@ import 'package:ebook/view_models/library_provider.dart';
 import 'package:ebook/view_models/search_provider.dart';
 import 'package:ebook/view_models/speed_provider.dart';
 import 'package:ebook/view_models/subject_provider.dart';
-import 'package:ebook/views/mainScreen/main_screen.dart';
+import 'package:ebook/views/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -18,26 +20,34 @@ import 'util/const.dart';
 import 'view_models/app_provider.dart';
 import 'view_models/book_mark_provider.dart';
 import 'view_models/book_history_provider.dart';
-
+class PostHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
 void main() async {
+  HttpOverrides.global =  PostHttpOverrides();
   await Hive.initFlutter();
   await Hive.openBox('bookmark_books');
   await Hive.openBox('bookmark_audioBooks');
   await Hive.openBox('book_reading_books');
   await Hive.openBox('audio_books');
+  await Hive.openBox('genre');
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppProvider()),
+        ChangeNotifierProvider(create: (_) => AppProvider()..checkWelcome()),
         ChangeNotifierProvider(create: (_) => AppBarProvider()),
-        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => HomeProvider()..getBooks()),
         ChangeNotifierProvider(create: (_) => DetailsEbookProvider()),
         ChangeNotifierProvider(create: (_) => DetailsAudioBookProvider()),
         ChangeNotifierProvider(create: (_) => BookMarkProvider()),
         ChangeNotifierProvider(create: (_) => BookHistoryProvider()),
          ChangeNotifierProvider(create: (_) => HistoryProvider()),
         ChangeNotifierProvider(create: (_) => SpeedProvider()),
-        ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => AudioProvider()..getBooks()),
           ChangeNotifierProvider(create: (_) => LibraryProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => SubjectProvider()),
@@ -62,7 +72,7 @@ class MyApp extends StatelessWidget {
           title: Constants.appName,
           theme: themeData(appProvider.theme),
           
-          home: const MainScreen(),
+          home: const SplashScreen(),
         );
       },
     );

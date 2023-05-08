@@ -48,7 +48,7 @@ class _SearchPageState extends State<SearchPage> {
           decoration: Constants.linearDecoration,
           child: Scaffold(
               backgroundColor: Colors.transparent,
-              resizeToAvoidBottomInset: false,
+              resizeToAvoidBottomInset: true,
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
                 automaticallyImplyLeading: false,

@@ -45,7 +45,9 @@ class _AudioBookPlayerState extends State<AudioBookPlayer> {
             maxHeight: screenHeight,
             controller: event.controller,
             onDismiss: (){
+               
               context.read<AudioProvider>().setAudioHistory(event.audioPlayer);
+              context.read<AudioProvider>().audioPlayer.dispose();
               context.read<AudioProvider>().setAudioBook(null);
               
             },

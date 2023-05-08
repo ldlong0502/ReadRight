@@ -74,7 +74,10 @@ class _AudioHomeState extends State<AudioHome> {
                       const SizedBox(
                         height: 50,
                       ),
-                      Image.asset('assets/images/audio_book.png'),
+                      CircleAvatar(
+                         radius: 40,
+                        backgroundColor: Colors.grey[350]!.withOpacity(0.2),
+                        child: Image.asset('assets/images/audio_book.png' , height: 50,)),
                       const SizedBox(
                       height: 10,
                     ),
